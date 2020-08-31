@@ -1,6 +1,7 @@
 const got = require('got')
 const nock = require('nock')
 const clientWithOutageStream = require('./client-with-outage-stream')
+const clientStream = require('./client-stream')
 
 const clientWithOutageFixture = [
   {
@@ -27,7 +28,7 @@ describe('clients with outages', () => {
       })
       .reply(200, clientWithOutageFixture)
 
-    clientWithOutageStream().subscribe({
+    clientWithOutageStream(clientStream()).subscribe({
       next: client => {
         expect(client.firstName).toBe('Tony Outage')
         done()
@@ -48,7 +49,7 @@ describe('clients with outages', () => {
 
     const mockFn = jest.fn()
 
-    clientWithOutageStream().subscribe({
+    clientWithOutageStream(clientStream()).subscribe({
       next: mockFn,
       error: err => done(err)
     })

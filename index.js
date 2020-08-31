@@ -1,8 +1,7 @@
 require('dotenv').config()
 const clientWithOutageStream = require('./client-with-outage-stream')
+const clientStream = require('./client-stream')
 
-const subscription = clientWithOutageStream().subscribe(client => {
+clientWithOutageStream(clientStream()).subscribe(client => {
   console.log(client.firstName)
 })
-
-setTimeout(() => subscription.unsubscribe(), 5000)
