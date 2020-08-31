@@ -1,0 +1,33 @@
+{
+  "name": "outage-mgmt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "got": "^11.5.2",
+    "lodash": "^4.17.20",
+    "node-fetch": "^2.6.0",
+    "rxjs": "^6.6.2"
+  },
+  "devDependencies": {
+    "canvas": "^2.6.1",
+    "jest": "^26.4.2",
+    "nock": "^13.0.4"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "standard": {
+    "env": [
+      "jest"
+    ]
+  },
+  "jest": {
+    "setupFiles": [
+      "./test-setup.js"
+    ]
+  }
+}
