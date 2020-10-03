@@ -1,4 +1,4 @@
-TODO
+V0
 
 - ✅ Tests
 - ✅ .env and git
@@ -8,3 +8,7 @@ TODO
 - heroku deploy
 - Isolate clients that had an outage and have returned to normal (first use for DB)
 - message clients
+
+Feature ideas
+
+- "message now" or "wait"
