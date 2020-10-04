@@ -32,10 +32,14 @@ describe('rxjs spikes', () => {
     })
   })
   it('emits events that only happen three times within 5 ms', () => {
+    // example of emitting events that happen three times within 5 ms.
+    // creates a new stream for each emitted value, and counts emitted
+    // values for 5ms.  could be improved by emitting immediately after
+    // the three values are found.
     const testScheduler = getTestScheduler()
     testScheduler.run(({ cold, hot, expectObservable }) => {
-      const source = hot('aaa-- bbb-- cc--- -dd-- -eee- ----- --fff -----|')
-      const expected = '  ----- a---- b---- ----- ----- -e--- ----- --f--|'
+      const source = hot('aaa--bbb--cc-dd-eee---fff--ggghhh----ababab--cdcdc--d-|')
+      const expected = '  -----a----b----------e-----f----g--h------ab------c---|'
 
       const received = source.pipe(
         map(v => of(v).pipe(
