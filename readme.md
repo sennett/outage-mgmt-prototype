@@ -3,11 +3,14 @@ V0
 1. ✅ Tests
 2. ✅ .env and git
 3. Isolate clients with an outage - X-times in Y seconds
-  - ensure that we don't re-notify once flagged - DB
-4. Get phone number
-5. Whatsapp API to Hamish
+     - ensure that we don't re-isolate once flagged - DB
 6. heroku deploy
+5. Whatsapp outage notifs. to Hamish
+
+V1
+
 7. Isolate clients that had an outage and have returned to normal
+7. Workflow
 8. message clients
 
 Feature ideas
