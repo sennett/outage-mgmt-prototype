@@ -20,7 +20,7 @@ Feature ideas
 UPTO
 
 - I just: implemented isolating clients with outage after 30 seconds (including tests)
-- next step: do not output twice once flagged as having at outage
+- next step: do not output twice once flagged as having an outage
 - use a redis to store this in memory stuff.  rename client-with-outage to continuous client with outage.  have another stream that consumes this and looks at redis, only outputting when not found in redis.
 
 Hamish notes:
