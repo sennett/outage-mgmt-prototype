@@ -83,7 +83,7 @@ describe('client-with-outage-stream', () => {
     })
   })
 
-  it('flags negative when intermittent', () => {
+  it('does not flag as outage when not quite intermittent enough', () => {
     buildTestScheduler().run(({ cold, expectObservable }) => {
       const values = {
         a: {
@@ -104,7 +104,7 @@ describe('client-with-outage-stream', () => {
     })
   })
 
-  it('flags positive when intermittent', () => {
+  it('flags as outage when intermittent', () => {
     buildTestScheduler().run(({ cold, expectObservable }) => {
       const values = {
         a: {
@@ -125,5 +125,24 @@ describe('client-with-outage-stream', () => {
     })
   })
 
-  it.todo('two clients at once')
+  it('handles two clients at once', () => {
+    buildTestScheduler().run(({ cold, expectObservable }) => {
+      const values = {
+        a: {
+          id: 'client_id',
+          firstName: 'Tony Outage',
+          hasOutage: true
+        },
+        b: {
+          id: 'client_id',
+          firstName: 'Mary No Outage',
+          hasOutage: false
+        }
+      }
+
+      const clientStream = cold(`- ${'ab 1s '.repeat(30)} ---`, values)
+      const expected = `         - ${'   1s '.repeat(30)} a--`
+      expectObservable(clientWithOutageStream(clientStream)).toBe(expected, values)
+    })
+  })
 })
