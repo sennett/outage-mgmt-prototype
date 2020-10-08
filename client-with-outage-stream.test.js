@@ -83,7 +83,7 @@ describe('client-with-outage-stream', () => {
     })
   })
 
-  it('does not flag if !hasOutage once in 59 seconds', () => {
+  it('flags negative when intermittent', () => {
     buildTestScheduler().run(({ cold, expectObservable }) => {
       const values = {
         a: {
@@ -104,7 +104,7 @@ describe('client-with-outage-stream', () => {
     })
   })
 
-  it('flags if !hasOutage once in 62 seconds', () => {
+  it('flags positive with intermittent', () => {
     buildTestScheduler().run(({ cold, expectObservable }) => {
       const values = {
         a: {
