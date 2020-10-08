@@ -22,3 +22,8 @@ UPTO
 - I just: worked out how to emit events that only emit X number within Y mins (see rxjs-spikes).
 - next step: use this to isolate clients with outage in step three above.
 - start with the tests.  get first passing then flesh out the rest and get them passing.
+
+- microtik and juniper for routers
+- ubiquiti customer presimses equipment (CPE).  "The CPE" is the dish on the outiside of the customers house
+- mimosa
+- cambium
