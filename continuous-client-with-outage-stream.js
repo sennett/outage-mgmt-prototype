@@ -5,7 +5,7 @@ module.exports = (allClientsStream) => allClientsStream
   .pipe(
     filter(client => client.hasOutage),
     groupBy(client => client.id),
-    map(eventsForClient => eventsForClient
+    flatMap(eventsForClient => eventsForClient
       .pipe(
         map(firstEventForClient => of(firstEventForClient).pipe(
           merge(eventsForClient),
@@ -16,6 +16,5 @@ module.exports = (allClientsStream) => allClientsStream
         )),
         mergeAll()
       )
-    ),
-    flatMap(client => client)
+    )
   )
