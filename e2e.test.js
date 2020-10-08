@@ -1,6 +1,5 @@
-const got = require('got')
 const nock = require('nock')
-const clientWithOutageStream = require('./client-with-outage-stream')
+const continuousClientWithOutageStream = require('./continuous-client-with-outage-stream')
 const clientStream = require('./client-stream')
 
 const clientFixtures = [
@@ -27,7 +26,7 @@ describe('e2e clients clients with outages', () => {
       })
       .reply(200, clientFixtures)
 
-    clientWithOutageStream(clientStream()).subscribe({
+    continuousClientWithOutageStream(clientStream()).subscribe({
       next: mockFn,
       error: err => done(err)
     })
