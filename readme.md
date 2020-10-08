@@ -2,8 +2,8 @@ V0
 
 1. ✅ Tests
 2. ✅ .env and git
-3. Isolate clients with an outage - X-times in Y seconds
-     - ensure that we don't re-isolate once flagged - DB
+3. ✅ Isolate clients with an outage - X-times in Y seconds
+4. ✅ ensure that we don't re-isolate once flagged - DB
 6. heroku deploy
 5. Whatsapp outage notifs. to Hamish
 
@@ -19,9 +19,11 @@ Feature ideas
 
 UPTO
 
-- I just: implemented isolating clients with outage after 30 seconds (including tests)
-- next step: do not output twice once flagged as having an outage
-- use a redis to store this in memory stuff.  rename client-with-outage to continuous client with outage.  have another stream that consumes this and looks at redis, only outputting when not found in redis.
+- I just: implemented a stream that ouputs only once when a client has an outage.
+- next step: fold this into continuous client with outage  - probably don't need stream across two separate files.
+- make the app start, and make e2e tests actually run the app against a known data set with mock services.
+- maybe make a little server where we can turn clients on and off and watch them trigger.
+- then point 6 above
 
 Hamish notes:
 
