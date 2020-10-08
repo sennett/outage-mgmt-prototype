@@ -1,10 +1,10 @@
-const { timer, from } = require('rxjs')
-const { mapTo, map, flatMap } = require('rxjs/operators')
+const { from, timer } = require('rxjs')
+const { map, flatMap } = require('rxjs/operators')
 const got = require('got')
 
 module.exports = () => timer(0, 1000)
   .pipe(
-    mapTo(from(got(`${process.env.CRM_DOMAIN}/crm/api/v1.0/clients`, {
+    map(() => from(got(`${process.env.CRM_DOMAIN}/crm/api/v1.0/clients`, {
       headers: {
         Accept: 'application/json',
         'x-auth-token': process.env.CRM_API_KEY
