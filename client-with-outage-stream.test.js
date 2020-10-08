@@ -1,8 +1,8 @@
 const { TestScheduler } = require('rxjs/testing')
 const clientWithOutageStream = require('./client-with-outage-stream')
 
-const buildTestScheduler = () => new TestScheduler((recevied, expected) => {
-  expect(recevied).toEqual(expected)
+const buildTestScheduler = () => new TestScheduler((received, expected) => {
+  expect(received).toEqual(expected)
 })
 
 describe('client-with-outage-stream', () => {
@@ -67,6 +67,23 @@ describe('client-with-outage-stream', () => {
     })
   })
 
-  it.todo('does not flag if !hasOutage for 30 continuous seconds')
+  it('does not flag if !hasOutage for 30 continuous seconds', () => {
+    buildTestScheduler().run(({ cold, expectObservable }) => {
+      const values = {
+        a: {
+          id: 'client_id',
+          firstName: 'Mary No Outage',
+          hasOutage: false
+        }
+      }
+
+      const clientStream = cold(`- ${'a 1s '.repeat(32)} ---`, values)
+      const expected = `         - ${'- 1s '.repeat(32)} ---` // go a bit higher with the sample time
+      expectObservable(clientWithOutageStream(clientStream)).toBe(expected, values)
+    })
+  })
+
   it.todo('does not flag if !hasOutage once in 35 seconds')
+
+  it.todo('two clients at once')
 })
