@@ -83,7 +83,47 @@ describe('client-with-outage-stream', () => {
     })
   })
 
-  it.todo('does not flag if !hasOutage once in 35 seconds')
+  it('does not flag if !hasOutage once in 59 seconds', () => {
+    buildTestScheduler().run(({ cold, expectObservable }) => {
+      const values = {
+        a: {
+          id: 'client_id',
+          firstName: 'Mary No Outage',
+          hasOutage: true
+        },
+        b: {
+          id: 'client_id',
+          firstName: 'Mary No Outage',
+          hasOutage: false
+        }
+      }
+
+      const clientStream = cold(`- ${'a 1s '.repeat(29)} b 1s ${'a 1s '.repeat(29)} ---`, values)
+      const expected = `         - ${'- 1s '.repeat(29)} - 1s ${'- 1s '.repeat(29)} ---`
+      expectObservable(clientWithOutageStream(clientStream)).toBe(expected, values)
+    })
+  })
+
+  it('flags if !hasOutage once in 62 seconds', () => {
+    buildTestScheduler().run(({ cold, expectObservable }) => {
+      const values = {
+        a: {
+          id: 'client_id',
+          firstName: 'Mary No Outage',
+          hasOutage: true
+        },
+        b: {
+          id: 'client_id',
+          firstName: 'Mary No Outage',
+          hasOutage: false
+        }
+      }
+
+      const clientStream = cold(`- ${'a 1s '.repeat(29)} b 1s ${'a 1s '.repeat(30)} ---`, values)
+      const expected = `         - ${'- 1s '.repeat(29)} - 1s ${'- 1s '.repeat(29)} 971ms a--`
+      expectObservable(clientWithOutageStream(clientStream)).toBe(expected, values)
+    })
+  })
 
   it.todo('two clients at once')
 })
