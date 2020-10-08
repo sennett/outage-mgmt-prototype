@@ -3,22 +3,21 @@ const nock = require('nock')
 const clientWithOutageStream = require('./client-with-outage-stream')
 const clientStream = require('./client-stream')
 
-const clientWithOutageFixture = [
+const clientFixtures = [
   {
     firstName: 'Tony Outage',
     hasOutage: true
-  }
-]
-
-const clientWithoutOutageFixture = [
-  {
+  }, {
     firstName: 'Mary No Outage',
     hasOutage: false
   }
 ]
 
-describe('clients with outages', () => {
-  it('returns a client with an outage', (done) => {
+describe('e2e clients clients with outages', () => {
+  const mockFn = jest.fn()
+  let numCallsPre30Seconds
+
+  beforeAll((done) => {
     nock(process.env.CRM_DOMAIN)
       .persist()
       .get('/crm/api/v1.0/clients')
@@ -26,28 +25,7 @@ describe('clients with outages', () => {
         isArchived: 0,
         lead: 0
       })
-      .reply(200, clientWithOutageFixture)
-
-    clientWithOutageStream(clientStream()).subscribe({
-      next: client => {
-        expect(client.firstName).toBe('Tony Outage')
-        done()
-      },
-      error: err => done(err)
-    })
-  })
-
-  it('does not return a client without an outage', (done) => {
-    nock(process.env.CRM_DOMAIN)
-      .persist()
-      .get('/crm/api/v1.0/clients')
-      .query({
-        isArchived: 0,
-        lead: 0
-      })
-      .reply(200, clientWithoutOutageFixture)
-
-    const mockFn = jest.fn()
+      .reply(200, clientFixtures)
 
     clientWithOutageStream(clientStream()).subscribe({
       next: mockFn,
@@ -55,34 +33,31 @@ describe('clients with outages', () => {
     })
 
     setTimeout(() => {
-      expect(mockFn).not.toHaveBeenCalled()
+      numCallsPre30Seconds = mockFn.mock.calls.length
+    }, 29000)
+
+    setTimeout(() => {
       done()
-    }, 4000)
+    }, 31000)
+  }, 32000)
+
+  it('returns a client with an outage after 30 seconds', () => {
+    expect(mockFn).toHaveBeenCalledWith(expect.objectContaining({
+      firstName: 'Tony Outage'
+    }))
   })
 
-  it('calls nock', async () => {
-    nock(process.env.CRM_DOMAIN)
-      .get('/crm/api/v1.0/clients')
-      .query({
-        isArchived: 0,
-        lead: 0
-      })
-      .reply(200, clientWithOutageFixture)
-
-    const response = await got(`${process.env.CRM_DOMAIN}/crm/api/v1.0/clients`, {
-      headers: {
-        Accept: 'application/json',
-        'x-auth-token': process.env.CRM_API_KEY
-      },
-      searchParams: {
-        isArchived: 0,
-        lead: 0
-      }
-    })
-    expect(JSON.parse(response.body)[0].firstName).toEqual('Tony Outage')
+  it('does not return a client without an outage after 30 seconds', () => {
+    expect(mockFn).not.toHaveBeenCalledWith(expect.objectContaining({
+      firstName: 'Mary No Outage'
+    }))
   })
 
-  afterEach(() => {
+  it('does not return anything before 30 seconds', () => {
+    expect(numCallsPre30Seconds).toStrictEqual(0)
+  })
+
+  afterAll(() => {
     nock.cleanAll()
   })
 })
