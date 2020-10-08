@@ -51,7 +51,22 @@ describe('client-with-outage-stream', () => {
     })
   })
 
-  it.todo('flags if hasOutage for 30 continuous seconds')
+  it('flags if hasOutage for 30 continuous seconds', () => {
+    buildTestScheduler().run(({ cold, expectObservable }) => {
+      const values = {
+        a: {
+          id: 'client_id',
+          firstName: 'Tony Outage',
+          hasOutage: true
+        }
+      }
+
+      const clientStream = cold(`- ${'a 1s '.repeat(29)} a---`, values)
+      const expected = `         - ${'- 1s '.repeat(29)} 971ms a---`
+      expectObservable(clientWithOutageStream(clientStream)).toBe(expected, values)
+    })
+  })
+
   it.todo('does not flag if !hasOutage for 30 continuous seconds')
   it.todo('does not flag if !hasOutage once in 35 seconds')
 })

@@ -9,9 +9,9 @@ module.exports = (allClientsStream) => allClientsStream
       .pipe(
         map(firstEventForClient => of(firstEventForClient).pipe(
           merge(eventsForClient),
-          takeUntil(of('anything').pipe(delay(5))),
+          takeUntil(of('anything').pipe(delay(30000))),
           count(),
-          filter(count => count >= 3),
+          filter(count => count >= 30),
           mapTo(firstEventForClient)
         )),
         mergeAll()
