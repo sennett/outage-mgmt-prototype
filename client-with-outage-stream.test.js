@@ -104,7 +104,7 @@ describe('client-with-outage-stream', () => {
     })
   })
 
-  it('flags positive with intermittent', () => {
+  it('flags positive when intermittent', () => {
     buildTestScheduler().run(({ cold, expectObservable }) => {
       const values = {
         a: {
