@@ -5,6 +5,9 @@ V0
 3. ✅ Isolate clients with an outage - X-times in Y seconds
 4. ✅ ensure that we don't re-isolate once flagged - DB
 6. heroku deploy
+    - machine
+    - CI 
+    - logging
 6. error handling (logging)
 5. Whatsapp outage notifs. to Hamish
 
