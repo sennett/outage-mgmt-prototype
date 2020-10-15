@@ -1,6 +1,7 @@
 const { from, timer } = require('rxjs')
 const { map, flatMap } = require('rxjs/operators')
 const got = require('got')
+const logger = require('./logger')
 
 const request = () => from(got(`${process.env.CRM_API}/v1.0/clients`, {
   headers: {
@@ -13,7 +14,7 @@ const request = () => from(got(`${process.env.CRM_API}/v1.0/clients`, {
   }
 }
 )).pipe(map(response => {
-  console.log('queried server')
+  logger.info(`queried server at ${process.env.CRM_API} received ${response.body}`)
   return JSON.parse(response.body)
 }))
 
