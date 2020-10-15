@@ -3,7 +3,7 @@ const { groupBy, flatMap, map, scan, filter, delay, merge, takeUntil, count, map
 const { of } = require('rxjs')
 
 const getTestScheduler = () => (new TestScheduler((received, expected) => {
-  // console.log(received)
+  console.log(received)
   expect(received).toEqual(expected)
 }))
 
@@ -50,6 +50,20 @@ describe('rxjs spikes', () => {
           mapTo(v)
         )),
         mergeAll()
+      )
+
+      expectObservable(received).toBe(expected)
+    })
+  })
+
+  it.only('does it output these initial source values twice?', () => {
+    getTestScheduler().run(({ cold, hot, expectObservable }) => {
+      const source = hot('-a-b-c-')
+      const expected = '   -a-b-c-'
+
+      const received = source.pipe(
+        flatMap(v => of(`${v} - parent:${v}`).pipe(
+          merge(source.pipe(map(w => `${w} - parent:${v}`)))))
       )
 
       expectObservable(received).toBe(expected)

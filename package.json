@@ -16,7 +16,8 @@
     "nock": "^13.0.4"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",

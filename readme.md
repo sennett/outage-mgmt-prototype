@@ -19,9 +19,10 @@ Feature ideas
 
 UPTO
 
-- I just: implemented a stream that ouputs only once when a client has an outage.
-- next step: fold this into continuous client with outage  - probably don't need stream across two separate files.
-- make the app start, and make e2e tests actually run the app against a known data set with mock services.
+- I just: made client outage stream not continuously output
+- ✅ next step: ensure it outputs clients multiple times if they recover for 30s, and then go out again. - ✅ see failing test in client-with-outage-stream
+- make the app start
+- make e2e tests actually run the app against a known data set with mock services.
 - maybe make a little server where we can turn clients on and off and watch them trigger.
 - then point 6 above
 

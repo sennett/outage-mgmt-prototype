@@ -1,7 +1,4 @@
 require('dotenv').config()
-const continuousClientWithOutageStream = require('./continuous-client-with-outage-stream')
-const clientStream = require('./client-stream')
+const app = require('./app')
 
-continuousClientWithOutageStream(clientStream()).subscribe(client => {
-  console.log(client.firstName)
-})
+app()
