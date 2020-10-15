@@ -13,8 +13,8 @@ const serverResponse = [
 
 describe('client-stream', () => {
   it('polls server every second', (done) => {
-    const scope = nock(process.env.CRM_DOMAIN)
-      .get('/crm/api/v1.0/clients')
+    const scope = nock(process.env.CRM_API)
+      .get('/v1.0/clients')
       .query({
         isArchived: 0,
         lead: 0

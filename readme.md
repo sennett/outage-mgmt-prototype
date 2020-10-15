@@ -21,8 +21,9 @@ UPTO
 
 - I just: made client outage stream not continuously output
 - ✅ next step: ensure it outputs clients multiple times if they recover for 30s, and then go out again. - ✅ see failing test in client-with-outage-stream
-- make the app start
-- make e2e tests actually run the app against a known data set with mock services.
+- ✅ make the app start
+- ✅ make e2e tests actually run the app against a known data set with mock services.
+- reduce noise
 - maybe make a little server where we can turn clients on and off and watch them trigger.
 - then point 6 above
 
