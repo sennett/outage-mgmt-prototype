@@ -4,11 +4,13 @@ V0
 2. ✅ .env and git
 3. ✅ Isolate clients with an outage - X-times in Y seconds
 4. ✅ ensure that we don't re-isolate once flagged - DB
+6. error handling (logging)
+    - ✅ warns when can't access external API
+    - ✅ warns when external API does not return something the correct shape
 6. heroku deploy
     - machine
     - CI 
     - logging
-6. error handling (logging)
 5. Whatsapp outage notifs. to Hamish
 
 V1

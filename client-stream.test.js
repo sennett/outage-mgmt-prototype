@@ -1,18 +1,22 @@
 const clientStream = require('./client-stream')
 const nock = require('nock')
+const got = require('got')
 
-const serverResponse = [
-  {
-    firstName: 'Tony Outage',
-    hasOutage: true
-  }, {
-    firstName: 'Mary No Outage',
-    hasOutage: false
-  }
-]
+const logger = require('./logger')
+logger.warn = jest.fn()
 
 describe('client-stream', () => {
-  it('polls server every second', (done) => {
+  xit('polls server every second', (done) => {
+    const serverResponse = [
+      {
+        firstName: 'Tony Outage',
+        hasOutage: true
+      }, {
+        firstName: 'Mary No Outage',
+        hasOutage: false
+      }
+    ]
+
     const scope = nock(process.env.CRM_API)
       .get('/v1.0/clients')
       .query({
@@ -36,5 +40,38 @@ describe('client-stream', () => {
       expect(scope.isDone()).toEqual(true)
       done()
     }, 4500)
+  })
+
+  describe('error logging', () => {
+    it.each`
+    test                                           | status | responseBody                           | warnMessage                | warnPayload
+    ${'warns when the API returns 400'}            | ${400} | ${'here is a response string for 400'} | ${'failed to get clients'} | ${got.HTTPError}
+    ${'warns when the API returns 500'}            | ${500} | ${'here is a response string for 500'} | ${'failed to get clients'} | ${got.HTTPError}
+    ${'warns when the API returns malformed JSON'} | ${200} | ${'here is some maformed JSON'}        | ${'failed to get clients'} | ${SyntaxError}
+    `('$test', ({ status, responseBody, warnMessage, warnPayload }, done) => {
+      console.log(done)
+      const scope = nock(process.env.CRM_API)
+        .get('/v1.0/clients')
+        .query(true)
+        .reply(status, responseBody)
+
+      const observer = jest.fn()
+
+      clientStream().subscribe({
+        next: observer,
+        error: observer,
+        complete: observer
+      })
+
+      setTimeout(() => {
+        expect(scope.isDone()).toEqual(true)
+        expect(logger.warn).toHaveBeenCalledWith('failed to get clients', expect.any(warnPayload))
+        expect(observer).not.toHaveBeenCalled()
+        done()
+      }, 500)
+    }, 1000)
+  })
+  afterEach(() => {
+    nock.cleanAll()
   })
 })
