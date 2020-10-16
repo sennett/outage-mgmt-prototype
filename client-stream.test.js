@@ -49,7 +49,7 @@ describe('client-stream', () => {
     ${'warns when the API returns 500'}            | ${500} | ${'here is a response string for 500'} | ${'failed to get clients'} | ${got.HTTPError}
     ${'warns when the API returns malformed JSON'} | ${200} | ${'here is some maformed JSON'}        | ${'failed to get clients'} | ${SyntaxError}
     `('$test', ({ status, responseBody, warnMessage, warnPayload }, done) => {
-      console.log(done)
+
       const scope = nock(process.env.CRM_API)
         .get('/v1.0/clients')
         .query(true)
