@@ -6,7 +6,7 @@ const logger = require('./logger')
 logger.warn = jest.fn()
 
 describe('client-stream', () => {
-  xit('polls server every second', (done) => {
+  it('polls server every second', (done) => {
     const serverResponse = [
       {
         firstName: 'Tony Outage',
@@ -71,6 +71,7 @@ describe('client-stream', () => {
       }, 500)
     }, 1000)
   })
+
   afterEach(() => {
     nock.cleanAll()
   })
