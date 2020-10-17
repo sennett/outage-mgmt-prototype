@@ -8,9 +8,11 @@ V0
     - ✅ warns when can't access external API
     - ✅ warns when external API does not return something the correct shape
 6. heroku deploy
-    - machine
-    - CI 
-    - logging
+    - ✅ machine
+    - ✅ make messaging service log info
+    - expose web server for keepalive
+    - 🚫 CI 
+    - logging - log out num of calls every 10 mins, rather than every second
 5. Whatsapp outage notifs. to Hamish
 
 V1

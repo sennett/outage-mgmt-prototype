@@ -1,4 +1,8 @@
 const nock = require('nock')
+
+jest.mock('./manager-notifier')
+
+const managerNotifier = require('./manager-notifier')
 const app = require('./app')
 
 const clientFixturesNoOutage = [
@@ -35,17 +39,10 @@ describe('e2e clients clients with outages', () => {
       .times(40)
       .reply(200, clientFixturesOutage)
 
-    messagingApiScope = nock(process.env.MESSAGING_API)
-      .post('/send-message', {
-        firstName: 'Tony Outage',
-        hasOutage: true
-      })
-      .reply(200)
-
     app()
 
     setTimeout(() => {
-      sentMessagePrematurely = messagingApiScope.isDone()
+      sentMessagePrematurely = managerNotifier.mock.calls.length > 0
     }, 34000)
 
     setTimeout(() => {
@@ -58,7 +55,10 @@ describe('e2e clients clients with outages', () => {
   })
 
   it('sends a message about the client with an outage after 30 seconds', () => {
-    expect(messagingApiScope.isDone()).toEqual(true)
+    expect(managerNotifier).toHaveBeenCalledWith(expect.objectContaining({
+      firstName: 'Tony Outage',
+      hasOutage: true
+    }))
   })
 
   afterAll(() => {
