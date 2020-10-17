@@ -2,6 +2,9 @@ require('dotenv').config()
 const app = require('./app')
 const logger = require('./logger')
 
+logger.info('PORT')
+logger.info(process.env.PORT)
+
 app()
 
 const fastify = require('fastify')()
