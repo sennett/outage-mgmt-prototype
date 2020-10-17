@@ -1,5 +1,5 @@
 const { from, timer, of } = require('rxjs')
-const { map, flatMap, catchError } = require('rxjs/operators')
+const { map, flatMap, catchError, tap } = require('rxjs/operators')
 const got = require('got')
 const logger = require('./logger')
 
@@ -18,7 +18,6 @@ const request = () => from(got(CLIENTS_URL, {
 }
 )).pipe(
   map(response => {
-    logger.info(`queried server at ${CLIENTS_URL}`)
     return JSON.parse(response.body)
   }),
   catchError(err => {
@@ -26,8 +25,18 @@ const request = () => from(got(CLIENTS_URL, {
     return of([])
   }))
 
-module.exports = () => timer(0, 1000)
-  .pipe(
-    flatMap(request),
-    flatMap(listOfClients => from(listOfClients))
-  )
+module.exports = () => {
+  let requestCount = 0
+  return timer(0, 1000)
+    .pipe(
+      flatMap(request),
+      tap(() => {
+        requestCount++
+        if (requestCount >= 5) {
+          logger.info(`completed ${requestCount} requests to ${CLIENTS_URL}`)
+          requestCount = 0
+        }
+      }),
+      flatMap(listOfClients => from(listOfClients))
+    )
+}

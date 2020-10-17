@@ -10,9 +10,9 @@ V0
 6. heroku deploy
     - ✅ machine
     - ✅ make messaging service log info
-    - expose web server for keepalive
+    - ✅ expose web server for keepalive
     - 🚫 CI 
-    - logging - log out num of calls every 10 mins, rather than every second
+    - ✅ logging - log out num of calls every 10 mins, rather than every second
 5. Whatsapp outage notifs. to Hamish
 
 V1
