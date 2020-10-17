@@ -32,5 +32,8 @@
     "setupFiles": [
       "./test-setup.js"
     ]
+  },
+  "engines": {
+    "node": "14.9.0"
   }
 }
