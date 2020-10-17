@@ -3,7 +3,10 @@ const { map, flatMap, catchError } = require('rxjs/operators')
 const got = require('got')
 const logger = require('./logger')
 
-const request = () => from(got(`${process.env.CRM_API}/v1.0/clients`, {
+const CLIENTS_URL = `${process.env.CRM_API}/v1.0/clients`
+logger.info('CLIENTS_URL', { url: CLIENTS_URL })
+
+const request = () => from(got(CLIENTS_URL, {
   headers: {
     Accept: 'application/json',
     'x-auth-token': process.env.CRM_API_KEY
@@ -15,7 +18,7 @@ const request = () => from(got(`${process.env.CRM_API}/v1.0/clients`, {
 }
 )).pipe(
   map(response => {
-    logger.info(`queried server at ${process.env.CRM_API} received ${response.body}`)
+    logger.info(`queried server at ${CLIENTS_URL}`)
     return JSON.parse(response.body)
   }),
   catchError(err => {
