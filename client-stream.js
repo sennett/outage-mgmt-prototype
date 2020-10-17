@@ -32,7 +32,7 @@ module.exports = () => {
       flatMap(request),
       tap(() => {
         requestCount++
-        if (requestCount >= 5) {
+        if (requestCount >= 600) {
           logger.info(`completed ${requestCount} requests to ${CLIENTS_URL}`)
           requestCount = 0
         }
