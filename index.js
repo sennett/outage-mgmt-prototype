@@ -11,7 +11,7 @@ fastify.get('/keep-alive', async (request, reply) => {
 })
 
 const startServer = async () => {
-  await fastify.listen(3000)
+  await fastify.listen(process.env.PORT || 3000)
   logger.info(`running server on ${fastify.server.address().port}`)
 }
 
