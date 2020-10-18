@@ -13,7 +13,11 @@ V0
     - ✅ expose web server for keepalive
     - 🚫 CI 
     - ✅ logging - log out num of calls every 10 mins, rather than every second
-5. Outage motifs. Service worker. Websocket/push API. Browser notification.
+5. Outage motifs.
+    - Service worker.
+    - Browser notification. 
+    - Websocket/push API. 
+    - Basic auth.
 6. don't renotify
 
 V1
