@@ -14,6 +14,7 @@ V0
     - 🚫 CI 
     - ✅ logging - log out num of calls every 10 mins, rather than every second
 5. Outage motifs. Service worker. Websocket/push API. Browser notification.
+6. don't renotify
 
 V1
 
@@ -27,8 +28,8 @@ Feature ideas
 
 UPTO
 
-- I just: ensured that we don't notify a bunch of times.  installed winston logger.
-- next: heroku config and deploy.
+- I just: got the basic setup for the fe working
+- next: spike service worker and notifications + Push API/websockets.  https://medium.com/izettle-engineering/beginners-guide-to-web-push-notifications-using-service-workers-cb3474a17679
 
 Hamish notes:
 
