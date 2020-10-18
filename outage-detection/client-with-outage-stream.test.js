@@ -5,7 +5,7 @@ const buildTestScheduler = () => new TestScheduler((received, expected) => {
   expect(received).toEqual(expected)
 })
 
-describe('continuous-client-with-outage-stream', () => {
+describe('client-with-outage-stream', () => {
   it('does not flag if client does not have an outage', () => {
     buildTestScheduler().run(({ hot, expectObservable }) => {
       const values = {
@@ -125,7 +125,7 @@ describe('continuous-client-with-outage-stream', () => {
     })
   })
 
-  xit('handles two clients at once', () => {
+  it('handles two clients at once', () => {
     buildTestScheduler().run(({ hot, expectObservable }) => {
       const values = {
         a: {
@@ -140,8 +140,8 @@ describe('continuous-client-with-outage-stream', () => {
         }
       }
 
-      const clientStream = hot(`- ${'ab 1s '.repeat(30)} ---`, values)
-      const expected = `        - ${'   1s '.repeat(30)} a--`
+      const clientStream = hot(`- ${'ab 998ms '.repeat(30)} ---`, values)
+      const expected = `        - ${'   1s    '.repeat(30)} a--`
       expectObservable(clientWithOutageStream(clientStream)).toBe(expected, values)
     })
   })
@@ -162,7 +162,7 @@ describe('continuous-client-with-outage-stream', () => {
     })
   })
 
-  xit('handles multiple clients concurrently', () => {
+  it('handles multiple clients concurrently', () => {
     buildTestScheduler().run(({ hot, expectObservable }) => {
       const values = {
         a: {

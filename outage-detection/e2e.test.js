@@ -1,4 +1,5 @@
 const nock = require('nock')
+const URL = require('url').URL
 
 jest.mock('./manager-notifier')
 
@@ -29,12 +30,13 @@ describe('e2e clients clients with outages', () => {
   let sentMessagePrematurely
 
   beforeAll((done) => {
-    nock(process.env.CRM_API)
-      .get('/v1.0/clients')
+    const apiUrl = new URL(process.env.CRM_API)
+    nock(apiUrl.origin)
+      .get(apiUrl.pathname)
       .query(true)
       .times(5)
       .reply(200, clientFixturesNoOutage)
-      .get('/v1.0/clients')
+      .get(apiUrl.pathname)
       .query(true)
       .times(40)
       .reply(200, clientFixturesOutage)

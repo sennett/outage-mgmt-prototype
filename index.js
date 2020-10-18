@@ -20,9 +20,11 @@ const startServer = async () => {
   fastify.get('/customer-data', async (request, reply) => {
     return [
       {
+        id: '1',
         firstName: 'Tony Outage',
         hasOutage: true
       }, {
+        id: '2',
         firstName: 'Mary No Outage',
         hasOutage: false
       }

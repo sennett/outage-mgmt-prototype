@@ -1,4 +1,4 @@
-const { filter, merge, takeUntil, distinctUntilChanged, flatMap, count, delay, mapTo } = require('rxjs/operators')
+const { groupBy, filter, merge, takeUntil, distinctUntilChanged, flatMap, count, delay, mapTo } = require('rxjs/operators')
 const { of } = require('rxjs')
 
 const extractFirstEventOf30ContinuousSeconds = (interestingEvents) => interestingEvents
@@ -12,7 +12,7 @@ const extractFirstEventOf30ContinuousSeconds = (interestingEvents) => interestin
     ))
   )
 
-module.exports = (clientEvents) => {
+const isolateOutageForOneCient = (clientEvents) => {
   const outageEvents = clientEvents.pipe(filter(client => client.hasOutage))
   const continuousOutageSignals = extractFirstEventOf30ContinuousSeconds(outageEvents)
 
@@ -23,5 +23,12 @@ module.exports = (clientEvents) => {
     merge(continuousUppageSignals),
     distinctUntilChanged((p, q) => p.hasOutage === q.hasOutage),
     filter(signal => signal.hasOutage)
+  )
+}
+
+module.exports = (allClientEvents) => {
+  return allClientEvents.pipe(
+    groupBy(client => client.id),
+    flatMap(clientStream => isolateOutageForOneCient(clientStream))
   )
 }
