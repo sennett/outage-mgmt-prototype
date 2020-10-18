@@ -3,7 +3,7 @@ const nock = require('nock')
 jest.mock('./manager-notifier')
 
 const managerNotifier = require('./manager-notifier')
-const app = require('./app')
+const outageDetection = require('./index')
 
 const clientFixturesNoOutage = [
   {
@@ -26,7 +26,7 @@ const clientFixturesOutage = [
 ]
 
 describe('e2e clients clients with outages', () => {
-  let messagingApiScope, sentMessagePrematurely
+  let sentMessagePrematurely
 
   beforeAll((done) => {
     nock(process.env.CRM_API)
@@ -39,7 +39,7 @@ describe('e2e clients clients with outages', () => {
       .times(40)
       .reply(200, clientFixturesOutage)
 
-    app()
+    outageDetection()
 
     setTimeout(() => {
       sentMessagePrematurely = managerNotifier.mock.calls.length > 0

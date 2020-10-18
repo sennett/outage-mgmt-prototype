@@ -1,8 +1,8 @@
 require('dotenv').config()
-const app = require('./app')
+const outageDetection = require('./outage-detection')
 const logger = require('./logger')
 
-app()
+outageDetection()
 
 const fastify = require('fastify')()
 

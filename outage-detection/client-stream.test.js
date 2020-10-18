@@ -2,7 +2,7 @@ const clientStream = require('./client-stream')
 const nock = require('nock')
 const got = require('got')
 
-const logger = require('./logger')
+const logger = require('../logger')
 logger.warn = jest.fn()
 
 describe('client-stream', () => {

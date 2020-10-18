@@ -2,7 +2,7 @@ const clientWithOutageStream = require('./client-with-outage-stream')
 const clientStream = require('./client-stream')
 const managerNotifier = require('./manager-notifier')
 const { groupBy, flatMap } = require('rxjs/operators')
-const logger = require('./logger')
+const logger = require('../logger')
 const { curry } = require('lodash')
 
 module.exports = () => {
