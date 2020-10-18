@@ -34,7 +34,7 @@ Feature ideas
 UPTO
 
 - I just: spiked service worker and notifications + Push API/websockets.  https://medium.com/izettle-engineering/beginners-guide-to-web-push-notifications-using-service-workers-cb3474a17679.  did the round trip.
-- next: why does it send so many?  the stream should stop that from happening....
+- next: yarn start should send notification.  why does it send so many?  the stream should stop that from happening....
 - then: save subscription.  postgres local and prod.  knex.  migrations. 
 
 Hamish notes:
