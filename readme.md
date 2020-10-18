@@ -13,7 +13,7 @@ V0
     - ✅ expose web server for keepalive
     - 🚫 CI 
     - ✅ logging - log out num of calls every 10 mins, rather than every second
-5. Whatsapp outage notifs. to Hamish
+5. Outage motifs. Service worker. Websocket/push API. Browser notification.
 
 V1
 
