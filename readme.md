@@ -18,7 +18,7 @@ V0
     - Browser notification. 
     - Websocket/push API. 
     - Basic auth.
-6. don't renotify
+6. don't renotify on service restart
 
 V1
 
