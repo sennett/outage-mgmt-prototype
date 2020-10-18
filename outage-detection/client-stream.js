@@ -3,7 +3,7 @@ const { map, flatMap, catchError, tap } = require('rxjs/operators')
 const got = require('got')
 const logger = require('../logger')
 
-const CLIENTS_URL = `${process.env.CRM_API}/v1.0/clients`
+const CLIENTS_URL = `${process.env.CRM_API}`
 logger.info('CLIENTS_URL', { url: CLIENTS_URL })
 
 const request = () => from(got(CLIENTS_URL, {

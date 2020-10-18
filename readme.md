@@ -13,11 +13,12 @@ V0
     - ✅ expose web server for keepalive
     - 🚫 CI 
     - ✅ logging - log out num of calls every 10 mins, rather than every second
-5. Outage motifs.
+5. Outage notifs.
     - Service worker.
     - Browser notification. 
     - Websocket/push API. 
     - Basic auth.
+    - message contents.
 6. don't renotify on service restart
 
 V1
@@ -32,8 +33,9 @@ Feature ideas
 
 UPTO
 
-- I just: got the basic setup for the fe working
-- next: spike service worker and notifications + Push API/websockets.  https://medium.com/izettle-engineering/beginners-guide-to-web-push-notifications-using-service-workers-cb3474a17679
+- I just: spiked service worker and notifications + Push API/websockets.  https://medium.com/izettle-engineering/beginners-guide-to-web-push-notifications-using-service-workers-cb3474a17679.  did the round trip.
+- next: why does it send so many?  the stream should stop that from happening....
+- then: save subscription.  postgres local and prod.  knex.  migrations. 
 
 Hamish notes:
 

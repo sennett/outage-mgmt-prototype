@@ -18,7 +18,15 @@
   <script type="html/template" id="missing-features-message">
     Your browser is not currrently supported. You need Service Worker, Push API, and Notification support.  You are missing <%= reasons %>.  Please update your browser to continue.
   </script>
-  <div id="error-target" class='warning'></div>
+  <div id="error-target" class="warning"></div>
+
+  <div id="controls" class="hidden">
+    <p>Press the button below to enable notifications</p>
+    <button onclick="enableNotifications()">Enable notifications 😎👍</button>
+    <button onclick="sendNotification()">Send notification</button>
+  </div>
+
+
 </body>
 
 </html>
