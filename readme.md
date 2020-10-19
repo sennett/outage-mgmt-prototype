@@ -34,8 +34,6 @@ Feature ideas
 UPTO
 
 - I just: spiked service worker and notifications + Push API/websockets.  https://medium.com/izettle-engineering/beginners-guide-to-web-push-notifications-using-service-workers-cb3474a17679.  did the round trip.
-- I just: got the tests passing
-- next: add new test to warn when no client ID in client-with-outage-stream, and filter out
 - then: save subscription.  postgres local and prod.  knex.  migrations.
 
 Hamish notes:

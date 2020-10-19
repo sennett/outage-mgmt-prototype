@@ -1,5 +1,8 @@
 const { TestScheduler } = require('rxjs/testing')
 const clientWithOutageStream = require('./client-with-outage-stream')
+const logger = require('../logger')
+
+jest.mock('../logger.js')
 
 const buildTestScheduler = () => new TestScheduler((received, expected) => {
   expect(received).toEqual(expected)
@@ -201,6 +204,34 @@ describe('client-with-outage-stream', () => {
       const continuousClientStream = hot(`- ${'a 999ms '.repeat(30)} ${'b 999ms '.repeat(30)} ${'a 999ms '.repeat(30)}     40s     -`, values)
       const expected = '                  -            30s          a 999ms 29s                      30s               a 999ms 39s -'
       expectObservable(clientWithOutageStream(continuousClientStream)).toBe(expected, values)
+    })
+  })
+
+  it('gracefully handles missing client.id', () => {
+    buildTestScheduler().run(({ hot, expectObservable }) => {
+      const values = {
+        a: {
+          firstName: 'Tony Outage',
+          hasOutage: true
+        },
+        b: {
+          id: undefined,
+          firstName: 'Tony Outage',
+          hasOutage: true
+        },
+        c: {
+          id: '',
+          firstName: 'Tony Outage',
+          hasOutage: true
+        }
+      }
+
+      const continuousClientStream = hot(`- ${'abc 997ms '.repeat(35)} -`, values)
+      const expected = '                  -            35s             -'
+      expectObservable(clientWithOutageStream(continuousClientStream)).toBe(expected, values)
+      // expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(values.a))
+      // expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(values.b))
+      // expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(values.c))
     })
   })
 })

@@ -1,5 +1,6 @@
-const { groupBy, filter, merge, takeUntil, distinctUntilChanged, flatMap, count, delay, mapTo } = require('rxjs/operators')
+const { groupBy, filter, merge, tap, takeUntil, distinctUntilChanged, flatMap, count, delay, mapTo } = require('rxjs/operators')
 const { of } = require('rxjs')
+const logger = require('../logger')
 
 const extractFirstEventOf30ContinuousSeconds = (interestingEvents) => interestingEvents
   .pipe(
@@ -28,6 +29,10 @@ const isolateOutageForOneCient = (clientEvents) => {
 
 module.exports = (allClientEvents) => {
   return allClientEvents.pipe(
+    tap(client => {
+      if (!client.id) logger.warn('no id found for client', client)
+    }),
+    filter(client => client.id),
     groupBy(client => client.id),
     flatMap(clientStream => isolateOutageForOneCient(clientStream))
   )

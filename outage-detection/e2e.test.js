@@ -8,9 +8,11 @@ const outageDetection = require('./index')
 
 const clientFixturesNoOutage = [
   {
+    id: 'client 1',
     firstName: 'Tony Outage',
     hasOutage: false
   }, {
+    id: 'client 2',
     firstName: 'Mary No Outage',
     hasOutage: false
   }
@@ -18,9 +20,11 @@ const clientFixturesNoOutage = [
 
 const clientFixturesOutage = [
   {
+    id: 'client 1',
     firstName: 'Tony Outage',
     hasOutage: true
   }, {
+    id: 'client 2',
     firstName: 'Mary No Outage',
     hasOutage: false
   }
