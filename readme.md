@@ -33,9 +33,9 @@ Feature ideas
 
 UPTO
 
-- I just:got the notification displaying properly
-- next: test with local endpoint (configurable detection time).  tidy up these files and move them around.  look into service worker releases - how do I update?
-- then: save subscription.  postgres local and prod.  knex.  migrations.
+- I just: moved filed around.  created configurable detection window and local endpoint for manual tests
+- next: how does it handle multiple outages?
+- then: save subscription properly.  postgres local and prod.  knex.  migrations.
 
 Hamish notes:
 

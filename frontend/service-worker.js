@@ -53,7 +53,6 @@ self.addEventListener('push', async function (event) {
 })
 
 self.addEventListener('notificationclick', async function (event) {
-  // https://portal.valewisp.com/crm/client/443
   event.notification.close()
   await clients.openWindow(`https://portal.valewisp.com/crm/client/${event.notification.data.client.id}`)
 }, false)

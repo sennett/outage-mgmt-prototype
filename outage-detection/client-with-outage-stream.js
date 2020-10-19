@@ -6,9 +6,9 @@ const extractFirstEventOf30ContinuousSeconds = (interestingEvents) => interestin
   .pipe(
     flatMap(firstInterestingEvent => of(firstInterestingEvent).pipe(
       merge(interestingEvents),
-      takeUntil(of('anything').pipe(delay(30000))),
+      takeUntil(of('anything').pipe(delay(process.env.OUTAGE_FLAG_TIME_WINDOW_MS || 30000))),
       count(),
-      filter(count => count >= 30),
+      filter(count => count >= process.env.OUTAGE_FLAG_MIN_COUNT || 30),
       mapTo(firstInterestingEvent)
     ))
   )
