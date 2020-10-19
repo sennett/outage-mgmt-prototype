@@ -14,11 +14,11 @@ V0
     - 🚫 CI 
     - ✅ logging - log out num of calls every 10 mins, rather than every second
 5. Outage notifs.
-    - Service worker.
-    - Browser notification. 
-    - Websocket/push API. 
+    - ✅ Service worker.
+    - ✅ Browser notification. 
+    - ✅ Websocket/push API. 
+    - ✅ message contents.
     - Basic auth.
-    - message contents.
 6. don't renotify on service restart
 
 V1
