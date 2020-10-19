@@ -20,7 +20,7 @@ const saveSubscription = async (subscription) => {
     },
     body: JSON.stringify(subscription)
   })
-  return response.json()
+  return response
 }
 
 self.addEventListener('activate', async () => {
@@ -37,10 +37,23 @@ self.addEventListener('activate', async () => {
   }
 })
 
-self.addEventListener('push', function (event) {
+const showNotification = async (client) => {
+  await self.registration.showNotification(`Outage for ${client.firstName}`, {
+    body: 'Click to open UNMS and see what\'s up.',
+    data: { client }
+  })
+}
+
+self.addEventListener('push', async function (event) {
   if (event.data) {
-    console.log('Push event!! ', event.data.text())
+    await showNotification(event.data.json())
   } else {
     console.log('Push event but no data')
   }
 })
+
+self.addEventListener('notificationclick', async function (event) {
+  // https://portal.valewisp.com/crm/client/443
+  event.notification.close()
+  await clients.openWindow(`https://portal.valewisp.com/crm/client/${event.notification.data.client.id}`)
+}, false)

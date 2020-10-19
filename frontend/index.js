@@ -33,19 +33,11 @@ const registerServiceWorker = async () => {
   return swRegistration
 }
 
-const sendNotification = () => {
-  swRegistration.showNotification('anthonys notification', {
-    body: 'here is the notification body'
-  })
-}
-
-let swRegistration
-
 const main = async () => {
   const browserSupported = featureCheck()
 
   if (browserSupported) {
-    swRegistration = await registerServiceWorker()
+    await registerServiceWorker()
   }
 }
 

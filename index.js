@@ -4,6 +4,7 @@ const fastify = require('fastify')()
 const fastifyStatic = require('fastify-static')
 const outageDetection = require('./outage-detection')
 const logger = require('./logger')
+const managerNotifier = require('./outage-detection/manager-notifier')
 
 const startServer = async () => {
   fastify.register(fastifyStatic, {
@@ -13,8 +14,19 @@ const startServer = async () => {
     return 'running!'
   })
   fastify.post('/create-subscription', async (request, reply) => {
-    return request.body
-    // reply.code(200).send('actually did not create subscription')
+    logger.warn('did not actually create subscription')
+    await managerNotifier.setSubscription(request.body)
+    return reply.code(200).send('subscription saved')
+  })
+
+  fastify.get('/send-notif', async (request, reply) => {
+    logger.warn('sending notif')
+    await managerNotifier({
+      id: '1',
+      firstName: 'Tony Outage',
+      hasOutage: true
+    })
+    reply.code(200).send('message sent')
   })
 
   fastify.get('/customer-data', async (request, reply) => {

@@ -33,7 +33,8 @@ Feature ideas
 
 UPTO
 
-- I just: spiked service worker and notifications + Push API/websockets.  https://medium.com/izettle-engineering/beginners-guide-to-web-push-notifications-using-service-workers-cb3474a17679.  did the round trip.
+- I just:got the notification displaying properly
+- next: test with local endpoint (configurable detection time).  tidy up these files and move them around.  look into service worker releases - how do I update?
 - then: save subscription.  postgres local and prod.  knex.  migrations.
 
 Hamish notes:
