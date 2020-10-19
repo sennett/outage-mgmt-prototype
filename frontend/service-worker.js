@@ -40,7 +40,12 @@ self.addEventListener('activate', async () => {
 const showNotification = async (client) => {
   await self.registration.showNotification(`Outage for ${client.firstName}`, {
     body: 'Click to open UNMS and see what\'s up.',
-    data: { client }
+    data: { client },
+    tag: client.id,
+    requireInteraction: true,
+    image: 'http://localhost:3000/internet-down.png',
+    icon: 'http://localhost:3000/internet-down.png',
+    badge: 'http://localhost:3000/internet-down.png'
   })
 }
 

@@ -33,9 +33,9 @@ Feature ideas
 
 UPTO
 
-- I just: moved filed around.  created configurable detection window and local endpoint for manual tests
-- next: how does it handle multiple outages?
-- then: save subscription properly.  postgres local and prod.  knex.  migrations.
+- I just: handled multiple outages
+- next: save subscription properly.  postgres local and prod.  knex.  migrations.
+- then: basic auth
 
 Hamish notes:
 
