@@ -8,8 +8,10 @@
     "fastify": "^3.6.0",
     "fastify-static": "^3.2.1",
     "got": "^11.7.0",
+    "knex": "^0.21.6",
     "lodash": "^4.17.20",
     "node-fetch": "^2.6.1",
+    "pg": "^8.4.1",
     "rxjs": "^6.6.3",
     "web-push": "^3.4.4",
     "winston": "^3.3.3"
