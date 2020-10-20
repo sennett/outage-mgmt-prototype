@@ -1,5 +1,7 @@
 /* globals self, atob, fetch, clients */
 
+const BASE_URL = self.registration.scope // includes trailing /
+
 const urlB64ToUint8Array = base64String => {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
@@ -12,8 +14,7 @@ const urlB64ToUint8Array = base64String => {
 }
 
 const saveSubscription = async (subscription) => {
-  const SERVER_URL = 'http://localhost:3000/create-subscription'
-  const response = await fetch(SERVER_URL, {
+  const response = await fetch(`${BASE_URL}create-subscription`, {
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
@@ -30,8 +31,7 @@ self.addEventListener('activate', async () => {
       userVisibleOnly: true
     }
     const subscription = await self.registration.pushManager.subscribe(options)
-    const response = await saveSubscription(subscription)
-    console.log(response)
+    await saveSubscription(subscription)
   } catch (err) {
     console.log('Error', err)
   }
@@ -43,9 +43,9 @@ const showNotification = async (client) => {
     data: { client },
     tag: client.id,
     requireInteraction: true,
-    image: 'http://localhost:3000/internet-down.png',
-    icon: 'http://localhost:3000/internet-down.png',
-    badge: 'http://localhost:3000/internet-down.png'
+    image: `${BASE_URL}internet-down.png`,
+    icon: `${BASE_URL}internet-down.png`,
+    badge: `${BASE_URL}internet-down.png`
   })
 }
 
