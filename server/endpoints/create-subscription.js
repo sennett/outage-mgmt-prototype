@@ -1,8 +1,10 @@
+const db = require('../../db')
 const logger = require('../../logger')
-const managerNotifier = require('../../outage-detection/manager-notifier')
 
 module.exports = (fastify) => fastify.post('/create-subscription', async (request, reply) => {
-  logger.warn('did not actually create subscription')
-  await managerNotifier.setSubscription(request.body)
-  return reply.code(200).send('subscription saved')
+  await db('push_notification_subscriptions').insert({
+    subscription: request.body
+  })
+  logger.info('saved subscription', request.body)
+  return reply.code(200).send(request.body)
 })

@@ -20,6 +20,7 @@ V0
     - ✅ message contents.
     - Basic auth.
 6. don't renotify on service restart
+7. pretty page
 
 V1
 
@@ -33,10 +34,8 @@ Feature ideas
 
 UPTO
 
-- I just: handled multiple outages
-- next: deal with localhost in server-worker - just pull from current page URL?  how does this work with a service worker?
-- next: save subscription properly.  postgres local and prod.  knex.  migrations.
-- then: basic auth
+- I just: log saving subscription. read subscriptions from DB when sending message. expired subscriptions
+- next: basic auth
 
 Hamish notes:
 

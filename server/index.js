@@ -2,6 +2,10 @@ const logger = require('../logger')
 
 const fastify = require('fastify')()
 
+fastify.setErrorHandler((error, request, reply) => {
+  logger.error('error in http request', error)
+})
+
 const startServer = async () => {
   require('./endpoints/static-site')(fastify)
   require('./endpoints/keep-alive')(fastify)
