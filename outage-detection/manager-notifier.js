@@ -2,7 +2,7 @@ const logger = require('../logger')
 const webpush = require('web-push')
 const db = require('../db')
 const { from, empty } = require('rxjs')
-const { flatMap, map, count, tap, catchError } = require('rxjs/operators')
+const { flatMap, count, catchError } = require('rxjs/operators')
 
 let connected = false
 
