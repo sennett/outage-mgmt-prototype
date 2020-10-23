@@ -19,7 +19,8 @@ const saveSubscription = async (subscription) => {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(subscription)
+    body: JSON.stringify(subscription),
+    credentials: 'same-origin'
   })
   return response
 }

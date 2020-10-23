@@ -18,9 +18,10 @@ V0
     - ✅ Browser notification. 
     - ✅ Websocket/push API. 
     - ✅ message contents.
-    - Basic auth.
+    - ✅ Basic auth.
 6. don't renotify on service restart
 7. pretty page
+    - only write service worker when permissions granted (otherwise we are subscribing before asking for )     https://stackoverflow.com/questions/36126541/domexception-registration-failed-permission-denied I had this issue with Chrome after switching from http to https for local dev - needed a new permission for notifications.  I also discovered that you can't ask for notification permission in the service worker itself - you must ask for permission outside of the service worker.
 
 V1
 
@@ -34,8 +35,8 @@ Feature ideas
 
 UPTO
 
-- I just: log saving subscription. read subscriptions from DB when sending message. expired subscriptions
-- next: basic auth
+- I just: ensured that auth was working
+- next: make u and p configurable.
 
 Hamish notes:
 
