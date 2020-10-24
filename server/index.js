@@ -3,7 +3,6 @@ const path = require('path')
 const logger = require('../logger')
 
 const fastify = require('fastify')({
-  http2: true,
   https: {
     key: fs.readFileSync(path.join(__dirname, 'ssl/localhost.key')),
     cert: fs.readFileSync(path.join(__dirname, 'ssl/localhost.crt'))

@@ -14,8 +14,7 @@ const request = () => from(got(CLIENTS_URL, {
   searchParams: {
     isArchived: 0,
     lead: 0
-  },
-  http2: true
+  }
 }
 )).pipe(
   map(response => {

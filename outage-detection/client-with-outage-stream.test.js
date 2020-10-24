@@ -1,6 +1,5 @@
 const { TestScheduler } = require('rxjs/testing')
 const clientWithOutageStream = require('./client-with-outage-stream')
-const logger = require('../logger')
 
 jest.mock('../logger.js')
 
@@ -13,6 +12,7 @@ describe('client-with-outage-stream', () => {
     buildTestScheduler().run(({ hot, expectObservable }) => {
       const values = {
         a: {
+          id: 'client id',
           firstName: 'Mary no outage',
           hasOutage: false
         }
@@ -234,4 +234,23 @@ describe('client-with-outage-stream', () => {
       // expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(values.c))
     })
   })
+
+  // it('remembers that the client is out across service restarts', () => {
+  //   buildTestScheduler().run(({ hot, expectObservable }) => {
+  //     const values = {
+  //       a: {
+  //         firstName: 'Tony Outage',
+  //         hasOutage: true
+  //       }
+  //     }
+
+  //     const preRestartContinuousClientStream = hot(`- ${'a 999ms '.repeat(35)} -`, values)
+  //     const postRestartContinuousClientStream = hot(`- ${'a 999ms '.repeat(35)} -`, values)
+  //     const expected = '                  -            29s           -'
+  //     expectObservable(clientWithOutageStream(continuousClientStream)).toBe(expected, values)
+  //     // expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(values.a))
+  //     // expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(values.b))
+  //     // expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(values.c))
+  //   })
+  // })
 })

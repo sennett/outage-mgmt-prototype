@@ -6,9 +6,9 @@ const extractFirstEventOf30ContinuousSeconds = (interestingEvents) => interestin
   .pipe(
     flatMap(firstInterestingEvent => of(firstInterestingEvent).pipe(
       merge(interestingEvents),
-      takeUntil(of('anything').pipe(delay(process.env.OUTAGE_FLAG_TIME_WINDOW_MS || 30000))),
+      takeUntil(of('anything').pipe(delay(parseInt(process.env.OUTAGE_FLAG_TIME_WINDOW_MS) || 30000))),
       count(),
-      filter(count => count >= process.env.OUTAGE_FLAG_MIN_COUNT || 30),
+      filter(count => count >= (parseInt(process.env.OUTAGE_FLAG_MIN_COUNT) || 30)),
       mapTo(firstInterestingEvent)
     ))
   )
@@ -23,6 +23,8 @@ const isolateOutageForOneCient = (clientEvents) => {
   return continuousOutageSignals.pipe(
     merge(continuousUppageSignals),
     distinctUntilChanged((p, q) => p.hasOutage === q.hasOutage),
+    // tap and save client to DB here
+    // read client from DB.  if same as what we have, and out in DB, don't notifiy.
     filter(signal => signal.hasOutage)
   )
 }
