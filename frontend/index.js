@@ -24,20 +24,25 @@ const featureCheck = () => {
   return missingFeatures.length === 0
 }
 
-const enableNotifications = async () => {
+const installServiceWorker = async () => {
   await window.Notification.requestPermission()
+  const swRegistration = await navigator.serviceWorker.register('service-worker.js')
+  checkNotificationsPermission()
+  return swRegistration
 }
 
-const registerServiceWorker = async () => {
-  const swRegistration = await navigator.serviceWorker.register('service-worker.js')
-  return swRegistration
+const checkNotificationsPermission = () => {
+  if (window.Notification.permission === 'granted') {
+    document.getElementById('controls').classList.add('hidden')
+    document.getElementById('all-installed').classList.remove('hidden')
+  }
 }
 
 const main = async () => {
   const browserSupported = featureCheck()
 
   if (browserSupported) {
-    await registerServiceWorker()
+    checkNotificationsPermission()
   }
 }
 
