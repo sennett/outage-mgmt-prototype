@@ -39,7 +39,7 @@ self.addEventListener('activate', async () => {
 })
 
 const showNotification = async (client) => {
-  await self.registration.showNotification(`Outage for ${client.firstName}`, {
+  await self.registration.showNotification(`Outage for ${client.firstName} ${client.lastName}`, {
     body: 'Click to open UNMS and see what\'s up.',
     data: { client },
     tag: client.id,
