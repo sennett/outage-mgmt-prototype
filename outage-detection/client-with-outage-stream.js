@@ -1,6 +1,7 @@
-const { groupBy, filter, merge, tap, takeUntil, distinctUntilChanged, flatMap, count, delay, mapTo } = require('rxjs/operators')
-const { of } = require('rxjs')
+const { map, groupBy, filter, merge, tap, takeUntil, distinctUntilChanged, flatMap, count, delay, mapTo } = require('rxjs/operators')
+const { of, combineLatest, from } = require('rxjs')
 const logger = require('../logger')
+const { flagClientOut, clientHasOutage, flagClientOk } = require('./client-service-status-repository')
 
 const extractFirstEventOf30ContinuousSeconds = (interestingEvents) => interestingEvents
   .pipe(
@@ -23,8 +24,24 @@ const isolateOutageForOneCient = (clientEvents) => {
   return continuousOutageSignals.pipe(
     merge(continuousUppageSignals),
     distinctUntilChanged((p, q) => p.hasOutage === q.hasOutage),
-    // tap and save client to DB here
-    // read client from DB.  if same as what we have, and out in DB, don't notifiy.
+    // only flag when outage statues changes from API
+    // read from database
+    // continue if outage API is different from what we have in the database
+    // save new client state in the database - we know the new status
+
+    flatMap(signal => combineLatest(of(signal), from(clientHasOutage(signal.id)))),
+    filter(([clientFromApi, clientIsOutFromDb]) => {
+      return clientFromApi.hasOutage !== clientIsOutFromDb
+    }),
+    map(([clientFromApi]) => clientFromApi),
+    tap(client => {
+      if (client.hasOutage) {
+        flagClientOut(client.id)
+      } else {
+        flagClientOk(client.id)
+      }
+    }),
+
     filter(signal => signal.hasOutage)
   )
 }

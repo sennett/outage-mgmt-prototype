@@ -35,8 +35,9 @@ Feature ideas
 
 UPTO
 
-- I just: ensured that auth was working
-- next: make u and p configurable.
+- I just: starting moving tests to this new way of doing things
+- then: make the tests run faster using smaller times and move the rest over.  try making the timeout bigger.  make sure that we are not too close (yuck).  maybe we can resolve promise on stream completion instead?
+- timeout should be the lengt of the input array times the delay between each thing!
 
 Hamish notes:
 

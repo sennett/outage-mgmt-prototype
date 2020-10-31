@@ -32,12 +32,14 @@
   "standard": {
     "env": [
       "jest"
+    ],
+    "globals": [
+      "fail"
     ]
   },
   "jest": {
-    "setupFiles": [
-      "./test-setup.js"
-    ]
+    "globalSetup": "./jest-global-setup.js",
+    "globalTeardown": "./jest-global-teardown.js"
   },
   "engines": {
     "node": "14.9.0"
