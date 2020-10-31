@@ -26,6 +26,9 @@ V0
 
 V1
 
+1. Fix bug with chrome system notification
+7. Store all the outage data.
+8. Mock up page.
 7. Isolate clients that had an outage and have returned to normal
 7. Workflow
 8. message clients
