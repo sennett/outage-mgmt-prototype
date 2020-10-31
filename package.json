@@ -4,35 +4,42 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "basic-auth": "^2.0.1",
     "dotenv": "^8.2.0",
     "fastify": "^3.6.0",
     "fastify-static": "^3.2.1",
     "got": "^11.7.0",
+    "knex": "^0.21.6",
     "lodash": "^4.17.20",
     "node-fetch": "^2.6.1",
+    "pg": "^8.4.1",
     "rxjs": "^6.6.3",
+    "web-push": "^3.4.4",
     "winston": "^3.3.3"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.14",
     "canvas": "^2.6.1",
     "jest": "^26.5.2",
     "nock": "^13.0.4"
   },
   "scripts": {
     "test": "jest",
-    "start": "node index.js"
+    "start": "export NODE_EXTRA_CA_CERTS=./server/ssl/myCA.pem; node index.js"
   },
   "author": "",
   "license": "ISC",
   "standard": {
     "env": [
       "jest"
+    ],
+    "globals": [
+      "fail"
     ]
   },
   "jest": {
-    "setupFiles": [
-      "./test-setup.js"
-    ]
+    "globalSetup": "./jest-global-setup.js",
+    "globalTeardown": "./jest-global-teardown.js"
   },
   "engines": {
     "node": "14.9.0"

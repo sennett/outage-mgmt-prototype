@@ -1,206 +1,334 @@
-const { TestScheduler } = require('rxjs/testing')
-const clientWithOutageStream = require('./client-with-outage-stream')
+const { times, flatMap: _flatMap, isUndefined } = require('lodash')
+const { from, of } = require('rxjs')
+const { concatMap, delay } = require('rxjs/operators')
 
-const buildTestScheduler = () => new TestScheduler((received, expected) => {
-  expect(received).toEqual(expected)
-})
+describe('client-with-outage-stream', () => {
+  let clientWithOutageStream
+  let logger
 
-describe('continuous-client-with-outage-stream', () => {
-  it('does not flag if client does not have an outage', () => {
-    buildTestScheduler().run(({ hot, expectObservable }) => {
-      const values = {
-        a: {
-          firstName: 'Mary no outage',
-          hasOutage: false
-        }
-      }
-      const clientStream = hot('-a-', values)
-      const expected = '        ---'
-      expectObservable(clientWithOutageStream(clientStream)).toBe(expected)
-    })
-  })
+  const executeTest = async (input) => {
+    const timeBetweenEventsMs = 3
+    input = from(input).pipe(
+      concatMap(client => of(client).pipe(delay(isUndefined(client.delay) ? timeBetweenEventsMs : client.delay)))
+    )
 
-  it('does not flag if just one hasOutage', () => {
-    buildTestScheduler().run(({ hot, expectObservable }) => {
-      const values = {
-        a: {
-          id: 'client_id',
-          firstName: 'Tony Outage',
-          hasOutage: true
-        }
-      }
-      const clientStream = hot('-a-----', values)
-      const expected = '        -------'
-      expectObservable(clientWithOutageStream(clientStream)).toBe(expected)
-    })
-  })
+    const result = await (new Promise((resolve) => {
+      const output = jest.fn()
 
-  it('does not flag if hasOutage for 29 continuous seconds', () => {
-    buildTestScheduler().run(({ hot, expectObservable }) => {
-      const values = {
-        a: {
-          id: 'client_id',
-          firstName: 'Tony Outage',
-          hasOutage: true
-        }
-      }
-
-      const clientStream = hot(`- ${'a 1s '.repeat(29)} ----`, values)
-      const expected = `        - ${'- 1s '.repeat(29)} ----`
-      expectObservable(clientWithOutageStream(clientStream)).toBe(expected)
-    })
-  })
-
-  it('flags if hasOutage for 30 continuous seconds', () => {
-    buildTestScheduler().run(({ hot, expectObservable }) => {
-      const values = {
-        a: {
-          id: 'client_id',
-          firstName: 'Tony Outage',
-          hasOutage: true
-        }
-      }
-
-      const clientStream = hot(`- ${'a 1s '.repeat(29)} a---`, values)
-      const expected = `        - ${'- 1s '.repeat(29)} 971ms a---`
-      expectObservable(clientWithOutageStream(clientStream)).toBe(expected, values)
-    })
-  })
-
-  it('does not flag if !hasOutage for 30 continuous seconds', () => {
-    buildTestScheduler().run(({ hot, expectObservable }) => {
-      const values = {
-        a: {
-          id: 'client_id',
-          firstName: 'Mary No Outage',
-          hasOutage: false
-        }
-      }
-
-      const clientStream = hot(`- ${'a 1s '.repeat(40)} ---`, values)
-      const expected = `        - ${'- 1s '.repeat(40)} ---` // go a bit higher with the sample time
-      expectObservable(clientWithOutageStream(clientStream)).toBe(expected, values)
-    })
-  })
-
-  it('does not flag as outage when not quite intermittent enough', () => {
-    buildTestScheduler().run(({ hot, expectObservable }) => {
-      const values = {
-        a: {
-          id: 'client_id',
-          firstName: 'Mary No Outage',
-          hasOutage: true
+      clientWithOutageStream(input).subscribe({
+        next: (client) => {
+          output(client)
         },
-        b: {
-          id: 'client_id',
-          firstName: 'Mary No Outage',
-          hasOutage: false
-        }
-      }
-
-      const clientStream = hot(`- ${'a 1s '.repeat(29)} b 1s ${'a 1s '.repeat(29)} ---`, values)
-      const expected = `        - ${'- 1s '.repeat(29)} - 1s ${'- 1s '.repeat(29)} ---`
-      expectObservable(clientWithOutageStream(clientStream)).toBe(expected, values)
-    })
-  })
-
-  it('flags as outage when intermittent', () => {
-    buildTestScheduler().run(({ hot, expectObservable }) => {
-      const values = {
-        a: {
-          id: 'client_id',
-          firstName: 'Mary No Outage',
-          hasOutage: true
+        done: () => {
+          fail('clientWithOutageStream should not complete')
         },
-        b: {
-          id: 'client_id',
-          firstName: 'Mary No Outage',
-          hasOutage: false
+        error: (err) => {
+          fail(err)
         }
+      })
+
+      setTimeout(() => {
+        resolve(output)
+      }, 400)
+    }))
+
+    return result
+  }
+
+  // clientOutages needs to be scoped here, otherwise the value does not get reset between runs.
+  // question here https://stackoverflow.com/q/64600517/614523
+  let clientOutages
+  beforeEach(() => {
+    clientOutages = {}
+    jest.setMock('./client-service-status-repository', {
+      flagClientOk: jest.fn().mockImplementation((id) => {
+        clientOutages[id] = false
+      }),
+      flagClientOut: jest.fn().mockImplementation((id) => {
+        clientOutages[id] = true
+      }),
+      clientHasOutage: jest.fn().mockImplementation((id) => {
+        return [clientOutages[id]]
+      })
+    })
+
+    jest.setMock('../logger', {
+      warn: jest.fn()
+    })
+
+    clientWithOutageStream = require('./client-with-outage-stream')
+    logger = require('../logger')
+  })
+
+  describe('basic cases', () => {
+    it('does not flag if client does not have an outage', async () => {
+      const noOutage = {
+        id: 'client id',
+        firstName: 'Mary no outage',
+        hasOutage: false
       }
 
-      const clientStream = hot(`- ${'a 1s '.repeat(29)} b 1s ${'a 1s '.repeat(30)} ---`, values)
-      const expected = `        - ${'- 1s '.repeat(29)} - 1s ${'- 1s '.repeat(29)} 971ms a--`
-      expectObservable(clientWithOutageStream(clientStream)).toBe(expected, values)
+      const input = [noOutage]
+
+      const result = await executeTest(input)
+
+      expect(result).not.toHaveBeenCalled()
+    })
+
+    it('does not flag if just one hasOutage', async () => {
+      const outage = {
+        id: 'client_id',
+        firstName: 'Tony Outage',
+        hasOutage: true
+      }
+
+      const input = [outage]
+
+      const result = await executeTest(input)
+
+      expect(result).not.toHaveBeenCalled()
     })
   })
 
-  xit('handles two clients at once', () => {
-    buildTestScheduler().run(({ hot, expectObservable }) => {
-      const values = {
-        a: {
-          id: 'client_id',
-          firstName: 'Tony Outage',
-          hasOutage: true
-        },
-        b: {
-          id: 'client_id',
-          firstName: 'Mary No Outage',
-          hasOutage: false
-        }
+  describe('boundaries', () => {
+    it('does not flag if hasOutage for less than the outage flagging time', async () => {
+      const outage = {
+        id: 'client_id',
+        firstName: 'Tony Outage',
+        hasOutage: true
       }
 
-      const clientStream = hot(`- ${'ab 1s '.repeat(30)} ---`, values)
-      const expected = `        - ${'   1s '.repeat(30)} a--`
-      expectObservable(clientWithOutageStream(clientStream)).toBe(expected, values)
+      const input = [
+        ...times(29, () => outage)
+      ]
+
+      const result = await executeTest(input)
+
+      expect(result).not.toHaveBeenCalled()
+    })
+
+    it('flags if hasOutage for the entire outage flagging time', async () => {
+      const outage = {
+        id: 'client_id',
+        firstName: 'Tony Outage',
+        hasOutage: true
+      }
+
+      const input = [
+        ...times(30, () => outage)
+      ]
+
+      const result = await executeTest(input)
+
+      expect(result).toHaveBeenCalledWith(expect.objectContaining(outage))
+      expect(result).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not flag if no outage for entire outage flagging time', async () => {
+      const noOutage = {
+        id: 'client_id',
+        firstName: 'Mary No Outage',
+        hasOutage: false
+      }
+
+      const input = [
+        ...times(30, () => noOutage)
+      ]
+
+      const result = await executeTest(input)
+
+      expect(result).not.toHaveBeenCalled()
+    })
+
+    it('does not flag as outage when not quite intermittent enough', async () => {
+      const outage = {
+        id: 'client_id',
+        firstName: 'Mary Outage',
+        hasOutage: true
+      }
+
+      const noOutage = {
+        id: 'client_id',
+        firstName: 'Mary No Outage',
+        hasOutage: false
+      }
+
+      const input = [
+        ...times(29, () => outage),
+        ...times(60, () => noOutage),
+        ...times(29, () => outage)
+      ]
+
+      const result = await executeTest(input)
+
+      expect(result).not.toHaveBeenCalled()
     })
   })
 
-  it('does not continuously flag client as having outages', () => {
-    buildTestScheduler().run(({ hot, expectObservable }) => {
-      const values = {
-        a: {
-          id: 'client_id',
-          firstName: 'Tony Outage',
-          hasOutage: true
-        }
+  it('notices when client starts outputting outage again after recovery', async () => {
+    const outage = {
+      id: 'client_id 1',
+      firstName: 'Tony Outage',
+      hasOutage: true
+    }
+    const noOutage = {
+      id: 'client_id 1',
+      firstName: 'Tony No Outage',
+      hasOutage: false
+
+    }
+
+    const input = [
+      ...times(30, () => outage),
+      ...times(30, () => noOutage),
+      ...times(30, () => outage)
+    ]
+
+    const result = await executeTest(input)
+
+    expect(result).toHaveBeenCalledTimes(2)
+    expect(result).toHaveBeenCalledWith(expect.objectContaining(outage))
+    expect(result).not.toHaveBeenCalledWith(expect.objectContaining(noOutage))
+  })
+
+  describe('handling multiple clients', () => {
+    it('handles two clients one outage', async () => {
+      const outage = {
+        id: 'client_id',
+        firstName: 'Tony Outage',
+        hasOutage: true,
+        delay: 0
+      }
+      const noOutage = {
+        id: 'client_id two',
+        firstName: 'Mary No Outage',
+        hasOutage: false
       }
 
-      const continuousClientStream = hot(`- ${'a 999ms '.repeat(30)} a 999ms ${'a 999ms '.repeat(10)}`, values)
-      const expected = `                  - ${'1s      '.repeat(30)} a 999ms ${'1s      '.repeat(10)}`
-      expectObservable(clientWithOutageStream(continuousClientStream)).toBe(expected, values)
+      const input = _flatMap(times(30, () => [outage, noOutage]))
+
+      const result = await executeTest(input)
+
+      expect(result).toHaveBeenCalledTimes(1)
+      expect(result).toHaveBeenCalledWith(expect.objectContaining(outage))
+      expect(result).not.toHaveBeenCalledWith(expect.objectContaining(noOutage))
+    })
+
+    it('handles two clients two outages', async () => {
+      const outage = {
+        id: 'client_id',
+        firstName: 'Tony Outage',
+        hasOutage: true,
+        delay: 0
+      }
+      const noOutage = {
+        id: 'client_id two',
+        firstName: 'Mary Outage',
+        hasOutage: true
+      }
+
+      const input = _flatMap(times(30, () => [outage, noOutage]))
+
+      const result = await executeTest(input)
+
+      expect(result).toHaveBeenCalledTimes(2)
+      expect(result).toHaveBeenCalledWith(expect.objectContaining(outage))
+      expect(result).toHaveBeenCalledWith(expect.objectContaining(noOutage))
     })
   })
 
-  xit('handles multiple clients concurrently', () => {
-    buildTestScheduler().run(({ hot, expectObservable }) => {
-      const values = {
-        a: {
-          id: 'client_id 1',
-          firstName: 'Tony Outage',
-          hasOutage: true
-        },
-        b: {
-          id: 'client_id 2',
-          firstName: 'Mary Outage',
-          hasOutage: true
-        }
+  describe('behaviour across service restarts', () => {
+    it('notifies twice when client goes out-ok-restart-out', async () => {
+      const outagePreRestart = {
+        id: 'client id out-ok-restart-out',
+        firstName: 'Tony outage',
+        hasOutage: true
+      }
+      const noOutage = {
+        id: 'client id out-ok-restart-out',
+        firstName: 'Tony no outage',
+        hasOutage: false
+      }
+      const outagePostRestart = {
+        id: 'client id out-ok-restart-out',
+        firstName: 'Tony Outage new outage',
+        hasOutage: true
       }
 
-      const continuousClientStream = hot(`- ${'a 999ms '.repeat(15)} ${'(ab) 996ms '.repeat(15)} ${'b 999ms '.repeat(15)} ${'b 999ms '.repeat(15)}`, values)
-      const expected = '                  -                        30s                          a 999ms       14s        b 999ms 14s               '
-      expectObservable(clientWithOutageStream(continuousClientStream)).toBe(expected, values)
+      const inputPreRestart = [
+        ...times(30, () => outagePreRestart),
+        ...times(30, () => noOutage)
+      ]
+
+      const outputPreRestart = await executeTest(inputPreRestart)
+
+      expect(outputPreRestart).toHaveBeenCalledWith(expect.objectContaining(outagePreRestart))
+      expect(outputPreRestart).toHaveBeenCalledTimes(1)
+
+      const inputPostRestart = from([
+        ...times(30, () => outagePostRestart)
+      ]).pipe(
+        concatMap(client => of(client).pipe(delay(3)))
+      )
+
+      const outputPostRestart = await executeTest(inputPostRestart)
+
+      expect(outputPostRestart).toHaveBeenCalledWith(expect.objectContaining(outagePostRestart))
+      expect(outputPostRestart).toHaveBeenCalledTimes(1)
     })
+
+    it('remembers the client is out across service restarts', async () => {
+      const outage = {
+        id: 'client id across service restarts',
+        firstName: 'Tony Outage',
+        hasOutage: true
+      }
+
+      const inputPreRestart = [
+        ...times(30, () => outage)
+      ]
+
+      const outputPreRestart = await executeTest(inputPreRestart)
+
+      expect(outputPreRestart).toHaveBeenCalledWith(outage)
+      expect(outputPreRestart).toHaveBeenCalledTimes(1)
+
+      const inputPostRestart = [
+        ...times(30, () => outage)
+      ]
+
+      const outputPostRestart = await executeTest(inputPostRestart)
+
+      expect(outputPostRestart).not.toHaveBeenCalled()
+    })
+
+    it.todo('remembers that client is ok across service restarts')
   })
 
-  it('notices when client starts outputting outage again after recovery', () => {
-    buildTestScheduler().run(({ hot, expectObservable }) => {
-      const values = {
-        a: {
-          id: 'client_id 1',
-          firstName: 'Tony Outage',
-          hasOutage: true
-        },
-        b: {
-          id: 'client_id 1',
-          firstName: 'Tony No Outage',
-          hasOutage: false
-        }
-      }
+  it('gracefully handles missing client.id', async () => {
+    const noId = {
+      firstName: 'Tony Outage',
+      hasOutage: true
+    }
+    const undefinedId = {
+      id: undefined,
+      firstName: 'Tony Outage',
+      hasOutage: true
+    }
+    const emptyId = {
+      id: '',
+      firstName: 'Tony Outage',
+      hasOutage: true
+    }
 
-      const continuousClientStream = hot(`- ${'a 999ms '.repeat(30)} ${'b 999ms '.repeat(30)} ${'a 999ms '.repeat(30)}     40s     -`, values)
-      const expected = '                  -            30s          a 999ms 29s                      30s               a 999ms 39s -'
-      expectObservable(clientWithOutageStream(continuousClientStream)).toBe(expected, values)
-    })
+    const input = [noId, undefinedId, emptyId]
+
+    const result = await executeTest(input)
+
+    expect(result).not.toHaveBeenCalled()
+
+    expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(noId))
+    expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(undefinedId))
+    expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(emptyId))
   })
 })
