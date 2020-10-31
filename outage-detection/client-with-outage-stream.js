@@ -24,16 +24,15 @@ const isolateOutageForOneCient = (clientEvents) => {
   return continuousOutageSignals.pipe(
     merge(continuousUppageSignals),
     distinctUntilChanged((p, q) => p.hasOutage === q.hasOutage),
-    // only flag when outage statues changes from API
-    // read from database
-    // continue if outage API is different from what we have in the database
-    // save new client state in the database - we know the new status
 
+    // only flag when outage status not the same same as in db
     flatMap(signal => combineLatest(of(signal), from(clientHasOutage(signal.id)))),
     filter(([clientFromApi, clientIsOutFromDb]) => {
       return clientFromApi.hasOutage !== clientIsOutFromDb
     }),
     map(([clientFromApi]) => clientFromApi),
+
+    // save outage status in db
     tap(client => {
       if (client.hasOutage) {
         flagClientOut(client.id)
