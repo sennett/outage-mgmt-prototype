@@ -47,7 +47,7 @@ const featureCheck = () => {
   return missingFeatures.length === 0
 }
 
-const installNotifications = async () => {
+const installNotifications = async () => { // eslint-disable-line no-unused-vars
   await window.Notification.requestPermission()
   const swRegistration = await navigator.serviceWorker.register('service-worker.js')
   const existingSubscription = await swRegistration.pushManager.getSubscription()

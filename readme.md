@@ -1,11 +1,12 @@
 UPTO
 
-- I just: made notification unsub-resub work.  hopefully disabled the duplicate notifications on chrome mobile
-- next: test notification bug, save all the outage data and change repository
+- I just: fixed notifications
+- next: store all outage data
+- next: create prototype for using SNMP or pings inside network to test for outage.  SNMP walk to get network topology?  monitor uptime?  how would I tie this to users using UNMS or Sonar?
 
 V1
 
-1. Fix bug with chrome system notification
+1. ✅ Fix bug with chrome system notification
     - only make new subscription if we don't have one already.  `self.registration.pushManager.getSubscription().then(console.log)`
     - either return promises or use event.waitUntil in each lifecycle hook
     - now we have an issue where we have activated service worker, then disable notifications, then reanable.  we loose the push manager subscription.  check this code here https://github.com/GoogleChromeLabs/web-push-codelab/tree/master/completed/08-push-subscription-change  https://developers.google.com/web/fundamentals/codelabs/push-notifications  
