@@ -11,11 +11,24 @@ const notify = async (client) => {
     webpush.setVapidDetails(process.env.VAPID_CONTACT, process.env.VAPID_PUBLIC, process.env.VAPID_PRIVATE)
     connected = true
   }
-  const clientString = JSON.stringify(client)
+  const iconUrl = `${process.env.BASE_URL}/static-assets/internet-down.png`
+  const notification = {
+    title: `Outage for ${client.firstName} ${client.lastName}`,
+    options: {
+      body: 'Click to open UNMS and see what\'s up.',
+      data: { client },
+      tag: client.id,
+      requireInteraction: true,
+      image: iconUrl,
+      icon: iconUrl,
+      badge: iconUrl
+    }
+  }
+  const notificationString = JSON.stringify(notification)
   from(db.select(['subscription', 'id']).whereNull('expired').from('push_notification_subscriptions')).pipe(
     flatMap(rows => from(rows)),
     flatMap(row =>
-      from(webpush.sendNotification(row.subscription, clientString)).pipe(
+      from(webpush.sendNotification(row.subscription, notificationString)).pipe(
         catchError(async err => {
           logger.info('issue with subscription - expiring', { subscription: row.subscription, err })
           db('push_notification_subscriptions').where('id', row.id).update({

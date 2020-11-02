@@ -26,6 +26,7 @@ fastify.register(async (instance, opts) => {
   require('./endpoints/create-subscription')(instance)
 })
 
+require('./endpoints/static-assets')(fastify)
 require('./endpoints/keep-alive')(fastify)
 
 if (process.env.NODE_ENV === 'development') {

@@ -5,19 +5,8 @@ self.addEventListener('install', (event) => {
 })
 
 self.addEventListener('push', async function (event) {
-  const baseUrl = self.registration.scope // includes trailing /
-  const client = event.data.json()
-  const title = `Outage for ${client.firstName} ${client.lastName}`
-  const options = {
-    body: 'Click to open UNMS and see what\'s up.',
-    data: { client },
-    tag: client.id,
-    requireInteraction: true,
-    image: `${baseUrl}internet-down.png`,
-    icon: `${baseUrl}internet-down.png`,
-    badge: `${baseUrl}internet-down.png`
-  }
-  event.waitUntil(self.registration.showNotification(title, options))
+  const notification = event.data.json()
+  event.waitUntil(self.registration.showNotification(notification.title, notification.options))
 })
 
 self.addEventListener('notificationclick', async function (event) {
