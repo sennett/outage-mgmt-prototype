@@ -1,7 +1,7 @@
 UPTO
 
-- I just: fixed notifications
-- next: store all outage data
+- I just: started implementing storing all the outage data - need to test rejection
+- next: finish the test and implementation, and deploy
 - next: create prototype for using SNMP or pings inside network to test for outage.  SNMP walk to get network topology?  monitor uptime?  how would I tie this to users using UNMS or Sonar?
 
 V1
