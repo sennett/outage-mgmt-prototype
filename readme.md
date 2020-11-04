@@ -1,7 +1,8 @@
 UPTO
 
-- I just: started implementing storing all the outage data - need to test rejection
-- next: finish the test and implementation, and deploy
+- I just: made the client stream return the retrieval time from when we hit the API
+- next: make the outage service pass client retrival times into the repository
+- next: save message that caused outage + revival
 - next: create prototype for using SNMP or pings inside network to test for outage.  SNMP walk to get network topology?  monitor uptime?  how would I tie this to users using UNMS or Sonar?
 
 V1
@@ -11,6 +12,8 @@ V1
     - either return promises or use event.waitUntil in each lifecycle hook
     - now we have an issue where we have activated service worker, then disable notifications, then reanable.  we loose the push manager subscription.  check this code here https://github.com/GoogleChromeLabs/web-push-codelab/tree/master/completed/08-push-subscription-change  https://developers.google.com/web/fundamentals/codelabs/push-notifications  
 7. Store all the outage data.
+9. resolved client notification (update to say resolved)
+8. Handle company name notifications (like Dean Irvine)
 8. Mock up pages 
     - want to have a way of showing daily/weekly/monthly uptime across all clients.
     - want to show outage history per client.
@@ -51,6 +54,7 @@ Feature ideas
 Tech ideas:
 
 - use this lib to make a stream from fetch?  https://www.twilio.com/blog/using-rxjs-observables-with-javascript-async-and-await
+- make the pinging stream time configurable
 
 Hamish notes:
 

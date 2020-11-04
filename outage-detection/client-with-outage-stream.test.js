@@ -41,14 +41,14 @@ describe('client-with-outage-stream', () => {
   beforeEach(() => {
     clientOutages = {}
     jest.setMock('./client-service-status-repository', {
-      flagClientOk: jest.fn().mockImplementation((id) => {
+      flagClientOk: jest.fn().mockImplementation((id, outageEndTime) => {
         clientOutages[id] = false
       }),
-      flagClientOut: jest.fn().mockImplementation((id) => {
-        clientOutages[id] = true
+      flagClientOut: jest.fn().mockImplementation((id, outageStartTime) => {
+        clientOutages[id] = outageStartTime || true
       }),
       clientHasOutage: jest.fn().mockImplementation((id) => {
-        return [clientOutages[id]]
+        return [!!clientOutages[id]]
       })
     })
 
@@ -277,7 +277,7 @@ describe('client-with-outage-stream', () => {
       expect(outputPostRestart).toHaveBeenCalledTimes(1)
     })
 
-    it('remembers the client is out across service restarts', async () => {
+    it.only('remembers the client is out across service restarts', async () => {
       const outage = {
         id: 'client id across service restarts',
         firstName: 'Tony Outage',
@@ -330,5 +330,22 @@ describe('client-with-outage-stream', () => {
     expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(noId))
     expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(undefinedId))
     expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(emptyId))
+  })
+
+  it('updates the database with the client time', () => {
+    const noId = {
+      firstName: 'Tony Outage',
+      hasOutage: true
+    }
+    const undefinedId = {
+      id: undefined,
+      firstName: 'Tony Outage',
+      hasOutage: true
+    }
+    const emptyId = {
+      id: '',
+      firstName: 'Tony Outage',
+      hasOutage: true
+    }
   })
 })
