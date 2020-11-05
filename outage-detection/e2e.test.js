@@ -1,18 +1,21 @@
 const nock = require('nock')
 const URL = require('url').URL
+const { v4: uuidv4 } = require('uuid')
 
 jest.mock('./manager-notifier')
 
 const managerNotifier = require('./manager-notifier')
 const outageDetection = require('./index')
 
+const tonysId = uuidv4()
+const marysId = uuidv4()
 const clientFixturesNoOutage = [
   {
-    id: 'client 1',
+    id: tonysId,
     firstName: 'Tony Outage',
     hasOutage: false
   }, {
-    id: 'client 2',
+    id: marysId,
     firstName: 'Mary No Outage',
     hasOutage: false
   }
@@ -20,17 +23,17 @@ const clientFixturesNoOutage = [
 
 const clientFixturesOutage = [
   {
-    id: 'client 1',
+    id: tonysId,
     firstName: 'Tony Outage',
     hasOutage: true
   }, {
-    id: 'client 2',
+    id: marysId,
     firstName: 'Mary No Outage',
     hasOutage: false
   }
 ]
 
-describe('e2e clients clients with outages', () => {
+xdescribe('e2e clients clients with outages', () => {
   let sentMessagePrematurely
 
   beforeAll((done) => {

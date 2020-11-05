@@ -11,7 +11,7 @@ V1
     - only make new subscription if we don't have one already.  `self.registration.pushManager.getSubscription().then(console.log)`
     - either return promises or use event.waitUntil in each lifecycle hook
     - now we have an issue where we have activated service worker, then disable notifications, then reanable.  we loose the push manager subscription.  check this code here https://github.com/GoogleChromeLabs/web-push-codelab/tree/master/completed/08-push-subscription-change  https://developers.google.com/web/fundamentals/codelabs/push-notifications  
-7. Store all the outage data.
+7. ✅ Store all the outage data.
 9. resolved client notification (update to say resolved)
 8. Handle company name notifications (like Dean Irvine)
 8. Mock up pages 
