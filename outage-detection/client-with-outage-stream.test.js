@@ -1,6 +1,7 @@
 const { times, flatMap: _flatMap, isUndefined } = require('lodash')
 const { from, of } = require('rxjs')
 const { concatMap, delay } = require('rxjs/operators')
+const { subDays } = require('date-fns')
 
 describe('client-with-outage-stream', () => {
   let clientWithOutageStream
@@ -43,6 +44,7 @@ describe('client-with-outage-stream', () => {
     jest.setMock('./client-service-status-repository', {
       flagClientOk: jest.fn().mockImplementation((id, outageEndTime) => {
         clientOutages[id] = false
+        clientOutages[`${id}_outageEndTime`] = outageEndTime
       }),
       flagClientOut: jest.fn().mockImplementation((id, outageStartTime) => {
         clientOutages[id] = outageStartTime || true
@@ -277,7 +279,7 @@ describe('client-with-outage-stream', () => {
       expect(outputPostRestart).toHaveBeenCalledTimes(1)
     })
 
-    it.only('remembers the client is out across service restarts', async () => {
+    it('remembers the client is out across service restarts', async () => {
       const outage = {
         id: 'client id across service restarts',
         firstName: 'Tony Outage',
@@ -332,20 +334,32 @@ describe('client-with-outage-stream', () => {
     expect(logger.warn).toHaveBeenCalledWith('no id found for client', expect.objectContaining(emptyId))
   })
 
-  it('updates the database with the client time', () => {
-    const noId = {
+  it('updates the database with the outage information', async () => {
+    expect.assertions(2)
+    let outageTime = new Date(Date.now())
+    outageTime = subDays(outageTime, 2)
+    const outageInformation = times(30, () => ({
+      id: 'client_id',
       firstName: 'Tony Outage',
-      hasOutage: true
-    }
-    const undefinedId = {
-      id: undefined,
+      hasOutage: true,
+      retrievedAt: outageTime
+    }))
+
+    await executeTest(outageInformation)
+
+    expect(clientOutages.client_id).toEqual(outageTime)
+
+    let uppageTime = new Date(Date.now())
+    uppageTime = subDays(uppageTime, 2)
+    const uppageInformation = times(30, () => ({
+      id: 'client_id',
       firstName: 'Tony Outage',
-      hasOutage: true
-    }
-    const emptyId = {
-      id: '',
-      firstName: 'Tony Outage',
-      hasOutage: true
-    }
+      hasOutage: false,
+      retrievedAt: uppageTime
+    }))
+
+    await executeTest(uppageInformation)
+
+    expect(clientOutages.client_id_outageEndTime).toEqual(uppageTime)
   })
 })
