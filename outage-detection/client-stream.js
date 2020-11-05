@@ -17,12 +17,13 @@ const request = () => from(got(CLIENTS_URL, {
   }
 }
 )).pipe(
-  map(response => {
-    return JSON.parse(response.body)
-  }),
+  map(response => ({
+    clientList: JSON.parse(response.body),
+    retrievedAt: new Date(Date.now())
+  })),
   catchError(err => {
     logger.warn('failed to get clients', err)
-    return of([])
+    return of({ clientList: [], retrievedAt: undefined })
   }))
 
 module.exports = () => {
@@ -37,6 +38,13 @@ module.exports = () => {
           requestCount = 0
         }
       }),
-      flatMap(listOfClients => from(listOfClients))
+      flatMap(responseInfo => from(responseInfo.clientList)
+        .pipe(
+          map(client => ({
+            ...client,
+            retrievedAt: responseInfo.retrievedAt
+          }))
+        )
+      )
     )
 }

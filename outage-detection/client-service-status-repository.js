@@ -1,17 +1,35 @@
 const db = require('../db')
 
+const clientHasOutage = async (clientId) => {
+  const rows = await db('client_service_status').where({
+    client_id: clientId,
+    end: null
+  })
+
+  return rows.length > 0
+}
+
 module.exports = {
-  flagClientOut: async (clientId, time) => {
-    await db('client_service_status').where('client_id', clientId).del()
-    await db('client_service_status').insert({ client_id: clientId, has_outage: true })
+  clientHasOutage,
+
+  flagClientOk: async (clientId, outageEndTime) => {
+    const hasOutage = await clientHasOutage(clientId)
+    if (!hasOutage) {
+      throw new Error(`attempted to flag client ${clientId} as ok, but they do not currently have an outage in the DB. ignoring.`)
+    }
+
+    await db('client_service_status').where({
+      client_id: clientId,
+      end: null
+    }).update({ end: outageEndTime })
   },
 
-  flagClientOk: async (clientId, time) => {
-    await db('client_service_status').where('client_id', clientId).del()
-    await db('client_service_status').insert({ client_id: clientId, has_outage: false })
-  },
-  clientHasOutage: async (clientId) => {
-    const rows = await db('client_service_status').where('client_id', clientId)
-    return rows.length > 0 && rows[0].has_outage
+  flagClientOut: async (clientId, outageStartTime) => {
+    const hasOutage = await clientHasOutage(clientId)
+    if (hasOutage) {
+      throw new Error(`attempted to flag client ${clientId} as out, but they currently have an outage in the DB. ignoring.`)
+    }
+
+    await db('client_service_status').insert({ client_id: clientId, start: outageStartTime })
   }
 }

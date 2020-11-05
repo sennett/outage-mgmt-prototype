@@ -35,9 +35,9 @@ const isolateOutageForOneCient = (clientEvents) => {
     // save outage status in db
     tap(client => {
       if (client.hasOutage) {
-        flagClientOut(client.id)
+        flagClientOut(client.id, client.retrievedAt)
       } else {
-        flagClientOk(client.id)
+        flagClientOk(client.id, client.retrievedAt)
       }
     }),
 
