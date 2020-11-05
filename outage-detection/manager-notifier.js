@@ -4,6 +4,19 @@ const db = require('../db')
 const { from, empty } = require('rxjs')
 const { flatMap, count, catchError } = require('rxjs/operators')
 
+const clientName = (client) => {
+  const clientTypes = {
+    INDIVIDUAL: 1,
+    COMPANY: 2
+  }
+
+  if (client.clientType === clientTypes.COMPANY) {
+    return `${client.companyName} (${client.companyContactFirstName} ${client.companyContactLastName})`
+  } else {
+    return `${client.firstName} ${client.lastName}`
+  }
+}
+
 let connected = false
 
 const notify = async (client) => {
@@ -15,10 +28,10 @@ const notify = async (client) => {
   let title
   let iconUrl
   if (client.hasOutage) {
-    title = `Outage for ${client.firstName} ${client.lastName}`
+    title = `Outage: ${clientName(client)}`
     iconUrl = `${process.env.BASE_URL}/static-assets/internet-down.png`
   } else {
-    title = `${client.firstName} ${client.lastName} has recovered.`
+    title = `Recovered: ${clientName(client)}`
     iconUrl = `${process.env.BASE_URL}/static-assets/internet-ok.png`
   }
 

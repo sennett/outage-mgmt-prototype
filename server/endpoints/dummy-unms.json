@@ -16,5 +16,13 @@
     "firstName": "Anthony",
     "lastName": "Sennett",
     "hasOutage": false
+  },
+  {
+    "id": "adsdfgsdfg",
+    "clientType": 2,
+    "companyContactFirstName": "Dean",
+    "companyContactLastName": "Irvine",
+    "companyName": "Idec Construction LTD",
+    "hasOutage": true
   }
 ]
