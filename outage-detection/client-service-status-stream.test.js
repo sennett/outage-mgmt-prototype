@@ -3,8 +3,8 @@ const { from, of } = require('rxjs')
 const { concatMap, delay } = require('rxjs/operators')
 const { subDays } = require('date-fns')
 
-describe('client-with-outage-stream', () => {
-  let clientWithOutageStream
+describe('client-service-status-stream', () => {
+  let clientServiceStatusStream
   let logger
 
   const executeTest = async (input) => {
@@ -16,12 +16,12 @@ describe('client-with-outage-stream', () => {
     const result = await (new Promise((resolve) => {
       const output = jest.fn()
 
-      clientWithOutageStream(input).subscribe({
+      clientServiceStatusStream(input).subscribe({
         next: (client) => {
           output(client)
         },
         done: () => {
-          fail('clientWithOutageStream should not complete')
+          fail('clientServiceStatusStream should not complete')
         },
         error: (err) => {
           fail(err)
@@ -36,8 +36,6 @@ describe('client-with-outage-stream', () => {
     return result
   }
 
-  // clientOutages needs to be scoped here, otherwise the value does not get reset between runs.
-  // question here https://stackoverflow.com/q/64600517/614523
   let clientOutages
   beforeEach(() => {
     clientOutages = {}
@@ -58,7 +56,7 @@ describe('client-with-outage-stream', () => {
       warn: jest.fn()
     })
 
-    clientWithOutageStream = require('./client-with-outage-stream')
+    clientServiceStatusStream = require('./client-service-status-stream')
     logger = require('../logger')
   })
 

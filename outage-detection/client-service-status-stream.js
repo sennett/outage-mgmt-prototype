@@ -14,7 +14,7 @@ const extractFirstEventOf30ContinuousSeconds = (interestingEvents) => interestin
     ))
   )
 
-const isolateOutageForOneCient = (clientEvents) => {
+const isolateServiceStatusForOneCient = (clientEvents) => {
   const outageEvents = clientEvents.pipe(filter(client => client.hasOutage))
   const continuousOutageSignals = extractFirstEventOf30ContinuousSeconds(outageEvents)
 
@@ -52,6 +52,6 @@ module.exports = (allClientEvents) => {
     }),
     filter(client => client.id),
     groupBy(client => client.id),
-    flatMap(clientStream => isolateOutageForOneCient(clientStream))
+    flatMap(clientStream => isolateServiceStatusForOneCient(clientStream))
   )
 }
