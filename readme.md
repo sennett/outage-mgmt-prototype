@@ -5,7 +5,7 @@ UPTO
 
 V1
 
-8. Handle company name notifications (like Dean Irvine)
+8. ✅ Handle company name notifications (like Dean Irvine)
 8. Mock up pages 
     - want to have a summary showing daily/weekly/monthly uptime across all clients.
     - want to show outage history per client.
@@ -20,7 +20,6 @@ Feature ideas
 Tech ideas:
 
 - use this lib to make a stream from fetch?  https://www.twilio.com/blog/using-rxjs-observables-with-javascript-async-and-await
-- make the pinging stream time configurable
 - https://linux.die.net/man/1/snmpwalk
 
 Hamish notes:

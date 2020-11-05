@@ -28,7 +28,7 @@ const request = () => from(got(CLIENTS_URL, {
 
 module.exports = () => {
   let requestCount = 0
-  return timer(0, 1000)
+  return timer(0, process.env.CLIENT_API_HIT_INTERVAL_MS || 1000)
     .pipe(
       flatMap(request),
       tap(() => {
