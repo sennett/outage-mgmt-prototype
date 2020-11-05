@@ -3,8 +3,8 @@ const { from, of } = require('rxjs')
 const { concatMap, delay } = require('rxjs/operators')
 const { subDays } = require('date-fns')
 
-describe('client-with-outage-stream', () => {
-  let clientWithOutageStream
+describe('client-service-status-stream', () => {
+  let clientServiceStatusStream
   let logger
 
   const executeTest = async (input) => {
@@ -16,12 +16,12 @@ describe('client-with-outage-stream', () => {
     const result = await (new Promise((resolve) => {
       const output = jest.fn()
 
-      clientWithOutageStream(input).subscribe({
+      clientServiceStatusStream(input).subscribe({
         next: (client) => {
           output(client)
         },
         done: () => {
-          fail('clientWithOutageStream should not complete')
+          fail('clientServiceStatusStream should not complete')
         },
         error: (err) => {
           fail(err)
@@ -36,8 +36,6 @@ describe('client-with-outage-stream', () => {
     return result
   }
 
-  // clientOutages needs to be scoped here, otherwise the value does not get reset between runs.
-  // question here https://stackoverflow.com/q/64600517/614523
   let clientOutages
   beforeEach(() => {
     clientOutages = {}
@@ -58,7 +56,7 @@ describe('client-with-outage-stream', () => {
       warn: jest.fn()
     })
 
-    clientWithOutageStream = require('./client-with-outage-stream')
+    clientServiceStatusStream = require('./client-service-status-stream')
     logger = require('../logger')
   })
 
@@ -168,6 +166,8 @@ describe('client-with-outage-stream', () => {
   })
 
   it('notices when client starts outputting outage again after recovery', async () => {
+    expect.assertions(4)
+
     const outage = {
       id: 'client_id 1',
       firstName: 'Tony Outage',
@@ -188,9 +188,10 @@ describe('client-with-outage-stream', () => {
 
     const result = await executeTest(input)
 
-    expect(result).toHaveBeenCalledTimes(2)
-    expect(result).toHaveBeenCalledWith(expect.objectContaining(outage))
-    expect(result).not.toHaveBeenCalledWith(expect.objectContaining(noOutage))
+    expect(result).toHaveBeenCalledTimes(3)
+    expect(result.mock.calls[0][0]).toEqual(expect.objectContaining(outage))
+    expect(result.mock.calls[1][0]).toEqual(expect.objectContaining(noOutage))
+    expect(result.mock.calls[2][0]).toEqual(expect.objectContaining(outage))
   })
 
   describe('handling multiple clients', () => {
@@ -240,7 +241,9 @@ describe('client-with-outage-stream', () => {
   })
 
   describe('behaviour across service restarts', () => {
-    it('notifies twice when client goes out-ok-restart-out', async () => {
+    it('notifies correctly when client goes out-ok-restart-out', async () => {
+      expect.assertions(5)
+
       const outagePreRestart = {
         id: 'client id out-ok-restart-out',
         firstName: 'Tony outage',
@@ -264,14 +267,13 @@ describe('client-with-outage-stream', () => {
 
       const outputPreRestart = await executeTest(inputPreRestart)
 
-      expect(outputPreRestart).toHaveBeenCalledWith(expect.objectContaining(outagePreRestart))
-      expect(outputPreRestart).toHaveBeenCalledTimes(1)
+      expect(outputPreRestart).toHaveBeenCalledTimes(2)
+      expect(outputPreRestart.mock.calls[0][0]).toEqual(expect.objectContaining(outagePreRestart))
+      expect(outputPreRestart.mock.calls[1][0]).toEqual(expect.objectContaining(noOutage))
 
-      const inputPostRestart = from([
+      const inputPostRestart = [
         ...times(30, () => outagePostRestart)
-      ]).pipe(
-        concatMap(client => of(client).pipe(delay(3)))
-      )
+      ]
 
       const outputPostRestart = await executeTest(inputPostRestart)
 

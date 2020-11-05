@@ -1,8 +1,7 @@
 UPTO
 
-- I just: made the client stream return the retrieval time from when we hit the API
-- next: make the outage service pass client retrival times into the repository
-- next: save message that caused outage + revival
+- I just: updated business logic to notify recoveries
+- next: use different icon
 - next: create prototype for using SNMP or pings inside network to test for outage.  SNMP walk to get network topology?  monitor uptime?  how would I tie this to users using UNMS or Sonar?
 
 V1
@@ -55,6 +54,7 @@ Tech ideas:
 
 - use this lib to make a stream from fetch?  https://www.twilio.com/blog/using-rxjs-observables-with-javascript-async-and-await
 - make the pinging stream time configurable
+- https://linux.die.net/man/1/snmpwalk
 
 Hamish notes:
 

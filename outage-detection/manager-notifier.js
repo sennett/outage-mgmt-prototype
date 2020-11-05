@@ -11,9 +11,19 @@ const notify = async (client) => {
     webpush.setVapidDetails(process.env.VAPID_CONTACT, process.env.VAPID_PUBLIC, process.env.VAPID_PRIVATE)
     connected = true
   }
-  const iconUrl = `${process.env.BASE_URL}/static-assets/internet-down.png`
+
+  let title
+  let iconUrl
+  if (client.hasOutage) {
+    title = `Outage for ${client.firstName} ${client.lastName}`
+    iconUrl = `${process.env.BASE_URL}/static-assets/internet-down.png`
+  } else {
+    title = `${client.firstName} ${client.lastName} has recovered.`
+    iconUrl = `${process.env.BASE_URL}/static-assets/internet-ok.png`
+  }
+
   const notification = {
-    title: `Outage for ${client.firstName} ${client.lastName}`,
+    title,
     options: {
       body: 'Click to open UNMS and see what\'s up.',
       data: { client },
