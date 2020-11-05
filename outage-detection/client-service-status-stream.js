@@ -39,9 +39,7 @@ const isolateServiceStatusForOneCient = (clientEvents) => {
       } else {
         flagClientOk(client.id, client.retrievedAt)
       }
-    }),
-
-    filter(signal => signal.hasOutage)
+    })
   )
 }
 

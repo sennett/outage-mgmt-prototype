@@ -166,6 +166,8 @@ describe('client-service-status-stream', () => {
   })
 
   it('notices when client starts outputting outage again after recovery', async () => {
+    expect.assertions(4)
+
     const outage = {
       id: 'client_id 1',
       firstName: 'Tony Outage',
@@ -186,9 +188,10 @@ describe('client-service-status-stream', () => {
 
     const result = await executeTest(input)
 
-    expect(result).toHaveBeenCalledTimes(2)
-    expect(result).toHaveBeenCalledWith(expect.objectContaining(outage))
-    expect(result).not.toHaveBeenCalledWith(expect.objectContaining(noOutage))
+    expect(result).toHaveBeenCalledTimes(3)
+    expect(result.mock.calls[0][0]).toEqual(expect.objectContaining(outage))
+    expect(result.mock.calls[1][0]).toEqual(expect.objectContaining(noOutage))
+    expect(result.mock.calls[2][0]).toEqual(expect.objectContaining(outage))
   })
 
   describe('handling multiple clients', () => {
@@ -238,7 +241,9 @@ describe('client-service-status-stream', () => {
   })
 
   describe('behaviour across service restarts', () => {
-    it('notifies twice when client goes out-ok-restart-out', async () => {
+    it('notifies correctly when client goes out-ok-restart-out', async () => {
+      expect.assertions(5)
+
       const outagePreRestart = {
         id: 'client id out-ok-restart-out',
         firstName: 'Tony outage',
@@ -262,14 +267,13 @@ describe('client-service-status-stream', () => {
 
       const outputPreRestart = await executeTest(inputPreRestart)
 
-      expect(outputPreRestart).toHaveBeenCalledWith(expect.objectContaining(outagePreRestart))
-      expect(outputPreRestart).toHaveBeenCalledTimes(1)
+      expect(outputPreRestart).toHaveBeenCalledTimes(2)
+      expect(outputPreRestart.mock.calls[0][0]).toEqual(expect.objectContaining(outagePreRestart))
+      expect(outputPreRestart.mock.calls[1][0]).toEqual(expect.objectContaining(noOutage))
 
-      const inputPostRestart = from([
+      const inputPostRestart = [
         ...times(30, () => outagePostRestart)
-      ]).pipe(
-        concatMap(client => of(client).pipe(delay(3)))
-      )
+      ]
 
       const outputPostRestart = await executeTest(inputPostRestart)
 
