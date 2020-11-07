@@ -19,11 +19,20 @@ fastify.setErrorHandler((error, request, reply) => {
   logger.error('error in http request', error)
 })
 
+fastify.register(require('point-of-view'), {
+  engine: {
+    handlebars: require('handlebars')
+  },
+  root: path.join(__dirname, 'views'),
+  viewExt: 'hbs' // it will add the extension to all the views
+})
+
 fastify.register(async (instance, opts) => {
   require('./authenticate')(instance)
 
   require('./endpoints/static-site')(instance)
   require('./endpoints/create-subscription')(instance)
+  require('./endpoints/outage')(instance)
 })
 
 require('./endpoints/static-assets')(fastify)

@@ -1,6 +1,8 @@
 UPTO
 
-- I just: handle business-style notifications.
+- I just: got a route working loading outages
+- next: get all the data on the page
+- next: make the page look nice and integrate the header and footer from the notifications page
 - next: create prototype for using SNMP or pings inside network to test for outage.  SNMP walk to get network topology?  monitor uptime?  how would I tie this to users using UNMS or Sonar?
 
 V1
