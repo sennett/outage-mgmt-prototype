@@ -6,6 +6,11 @@ UPTO
 V1
 
 8. ✅ Handle company name notifications (like Dean Irvine)
+8. have some copy-pastable text
+  - link from notification to page with message and client name and outage time.
+  - one link to open client in UNMS, another link to copy message to clipboard
+  - click to copy and open valewisp facebook group page.
+  - 13:43: We're aware of an issue causing intermittent connectivity. We're currently en route to restore this as quickly as possible.
 8. Mock up pages 
     - want to have a summary showing daily/weekly/monthly uptime across all clients.
     - want to show outage history per client.
@@ -28,3 +33,10 @@ Hamish notes:
 - ubiquiti customer presimses equipment (CPE).  "The CPE" is the dish on the outiside of the customers house
 - mimosa
 - cambium
+
+What can I do next?
+
+- Better outage detection.  Hamish won't message people unless he knows a tower is down.  Build concept of equipment outage.  Not tied to UNMS any more :D  Hard, interesting problem.
+- SMS Messaging - medium, but premature.  He won't send bulk messages and is not sure about spending money just yet.
+- Copy paste message - easy, low impact.  No API stuff.
+- Dashboards showing outages - medium, sort of dull problem.  Client table.  Use client stream to read clients.  Update every 5 minutes.  Would need to do this anyway with outage detection.

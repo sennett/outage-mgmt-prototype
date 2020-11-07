@@ -24,12 +24,12 @@ module.exports = {
     }).update({ end: outageEndTime })
   },
 
-  flagClientOut: async (clientId, outageStartTime) => {
+  flagClientOut: async (clientId, outageStartTime, client) => {
     const hasOutage = await clientHasOutage(clientId)
     if (hasOutage) {
       throw new Error(`attempted to flag client ${clientId} as out, but they currently have an outage in the DB. ignoring.`)
     }
 
-    await db('client_service_status').insert({ client_id: clientId, start: outageStartTime })
+    await db('client_service_status').insert({ client_id: clientId, start: outageStartTime, client })
   }
 }

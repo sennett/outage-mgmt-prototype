@@ -44,8 +44,9 @@ describe('client-service-status-stream', () => {
         clientOutages[id] = false
         clientOutages[`${id}_outageEndTime`] = outageEndTime
       }),
-      flagClientOut: jest.fn().mockImplementation((id, outageStartTime) => {
+      flagClientOut: jest.fn().mockImplementation((id, outageStartTime, client) => {
         clientOutages[id] = outageStartTime || true
+        clientOutages[`${id}_clientJson`] = client
       }),
       clientHasOutage: jest.fn().mockImplementation((id) => {
         return [!!clientOutages[id]]
@@ -337,19 +338,21 @@ describe('client-service-status-stream', () => {
   })
 
   it('updates the database with the outage information', async () => {
-    expect.assertions(2)
+    expect.assertions(3)
     let outageTime = new Date(Date.now())
     outageTime = subDays(outageTime, 2)
-    const outageInformation = times(30, () => ({
+    const outClient = {
       id: 'client_id',
       firstName: 'Tony Outage',
       hasOutage: true,
       retrievedAt: outageTime
-    }))
+    }
+    const outageInformation = times(30, () => outClient)
 
     await executeTest(outageInformation)
 
     expect(clientOutages.client_id).toEqual(outageTime)
+    expect(clientOutages.client_id_clientJson).toEqual(outClient)
 
     let uppageTime = new Date(Date.now())
     uppageTime = subDays(uppageTime, 2)

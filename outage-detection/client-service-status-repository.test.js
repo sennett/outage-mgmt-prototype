@@ -131,13 +131,14 @@ describe('client-service-status-repository', () => {
     it('starts a new outage for the client with the passed time', async () => {
       expect.assertions(4)
       const clientId = uuidv4()
+      const client = { firstName: 'first name', lastName: 'last name' }
 
       const outageStatusBeforeActing = await clientHasOutage(clientId)
       expect(outageStatusBeforeActing).toEqual(false)
 
       const outageStarted = new Date(Date.now())
 
-      await flagClientOut(clientId, outageStarted)
+      await flagClientOut(clientId, outageStarted, client)
 
       const outageStatusAfterActing = await clientHasOutage(clientId)
       expect(outageStatusAfterActing).toEqual(true)
@@ -145,7 +146,7 @@ describe('client-service-status-repository', () => {
       const rows = await db('client_service_status').where('client_id', clientId)
 
       expect(rows.length).toEqual(1)
-      expect(rows[0]).toEqual(expect.objectContaining({ client_id: clientId, start: outageStarted, end: null }))
+      expect(rows[0]).toEqual(expect.objectContaining({ client_id: clientId, start: outageStarted, end: null, client }))
 
       clientIdsToDelete.push(clientId)
     })
