@@ -31,5 +31,13 @@ module.exports = {
     }
 
     await db('client_service_status').insert({ client_id: clientId, start: outageStartTime, client })
+  },
+
+  loadById: async (outageId) => {
+    const outage = await db('client_service_status').where({ id: outageId }).first()
+    if (!outage) {
+      throw new Error(`could not find outage with ID ${outageId}`)
+    }
+    return outage
   }
 }

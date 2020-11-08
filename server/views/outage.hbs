@@ -1,1 +1,85 @@
-<div>hello from {{clientName}}</div>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Outage Management Prototype</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.min.js" defer></script>
+
+</head>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    padding: 1rem;
+    background-color: #222;
+    color: #ddd;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .client-outage-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: solid 1px #666;
+  }
+
+  .client-outage-header__top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .client-outage-header__icon {
+    width: 6rem;
+  }
+
+  .client-outage-header__name {
+    flex-grow: 1;
+    margin: 0 0 0 1rem;
+  }
+
+  .client-outage-header__time {
+    margin-top: 1rem;
+  }
+
+  .client-outage-actions__message {
+    width: 100%;
+    height: 6rem
+  }
+
+  .client-outage-actions__buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 1rem 0;
+  }
+</style>
+
+<body>
+  <div class="client-outage-header">
+    <div class="client-outage-header__top-row">
+      <img src="/static-assets/internet-ok.png" class="client-outage-header__icon" />
+      <h1 class="client-outage-header__name">{{clientName}}</h1>
+    </div>
+    <div class="client-outage-header__time">Out since 11:42 (2h 40m)</div>
+  </div>
+
+  <div class="client-outage-actions">
+    <textarea
+      class="client-outage-actions__message">13:43: We're aware of an issue causing intermittent connectivity. We're currently en route to restore this as quickly as possible.</textarea>
+    <div class="client-outage-actions__buttons">
+      <button class="button">Call</button>
+      <button class="button">Copy and open FB</button>
+      <button class="button">Copy to SMS</button>
+    </div>
+  </div>
+
+
+</body>
+
+</html>
