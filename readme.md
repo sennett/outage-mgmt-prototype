@@ -1,7 +1,10 @@
 UPTO
 
-- I just: did the FE of client outage page, and have populated the page with data down until the copyable message.
-- next: complete the page functionality (data and behaviour), update notication to link back to the outage mgmt app (use outageID too).  make `/outages` list
+- I just: completed the FE of client outage page.
+- next: update notication to link back to the outage mgmt app (use outageID too).  make `/outages` list.
+    - move to client outage stream.
+    - returns client outage start and end events
+    - include client
 - next: create prototype for using SNMP or pings inside network to test for outage.  SNMP walk to get network topology?  monitor uptime?  how would I tie this to users using UNMS or Sonar?
 
 V1

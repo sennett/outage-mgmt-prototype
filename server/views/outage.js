@@ -28,7 +28,7 @@ const summaryRows = (clientOutage) => {
 const ICON_UP = '/static-assets/internet-ok.png'
 const ICON_DOWN = '/static-assets/internet-down.png'
 
-const copyableMessage = (clientOutage) => {
+const getCopyableMessage = (clientOutage) => {
   if (clientOutage.end) {
     return `Update ${format(Date.now(), 'HH:mm')}: The issue has been fixed and service was restored at ${format(clientOutage.end, 'HH:mm')}.  Thanks for your understanding.`
   } else {
@@ -37,6 +37,7 @@ const copyableMessage = (clientOutage) => {
 }
 
 module.exports = (clientOutage) => {
+  const copyableMessage = getCopyableMessage(clientOutage)
   const phoneNumberRaw = clientOutage.client.contacts?.[0]?.phone
   const number = phoneNumberRaw ? parsePhoneNumber(phoneNumberRaw, 'GB')?.number : null
 
@@ -44,10 +45,10 @@ module.exports = (clientOutage) => {
     clientName: clientName(clientOutage.client),
     iconSrc: clientOutage.end ? ICON_UP : ICON_DOWN,
     summaryRows: summaryRows(clientOutage),
-    copyableMessage: copyableMessage(clientOutage),
+    copyableMessage,
     callDisabled: number ? '' : 'disabled',
     callUri: `tel:${number}`,
-    smsUri: `sms:${number}`,
+    smsUri: `sms:${number};?&${encodeURIComponent(copyableMessage)}`,
     unmsLink: `https://portal.valewisp.com/crm/client/${clientOutage.client.id}`
   }
 }

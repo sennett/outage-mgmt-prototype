@@ -65,6 +65,27 @@
   }
 </style>
 
+<script>
+  const copyTextAndOpenFacebook = () => {
+    const textarea = document.getElementById('copyable-message')
+    textarea.select()
+    document.execCommand('copy')
+
+
+    // deselect
+    var sel = window.getSelection ? window.getSelection() : document.selection
+    if (sel) {
+      if (sel.removeAllRanges) {
+        sel.removeAllRanges()
+      } else if (sel.empty) {
+        sel.empty()
+      }
+    }
+
+    window.open('https://www.facebook.com/ValeWISP', '_blank').focus()
+  }
+</script>
+
 <body>
   <div class="client-outage-header">
     <div class="client-outage-header__top-row">
@@ -77,14 +98,14 @@
   </div>
 
   <div class="client-outage-actions">
-    <textarea class="client-outage-actions__message">{{copyableMessage}}</textarea>
+    <textarea class="client-outage-actions__message" id="copyable-message">{{copyableMessage}}</textarea>
     {{#if callDisabled}}
     <div>⚠️ No phone number for {{clientName}}</div>
     {{/if}}
     <div class="client-outage-actions__buttons">
       <a href="{{callUri}}"><button {{callDisabled}}>Call</button></a>
       <a href="{{smsUri}}"><button {{callDisabled}}>Copy to SMS</button></a>
-      <a><button>Copy and open FB</button></a>
+      <a onclick="copyTextAndOpenFacebook()"><button>Copy and open FB</button></a>
     </div>
   </div>
   <a href='{{unmsLink}}' target="_blank">Open in UNMS</a>
