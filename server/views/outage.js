@@ -1,4 +1,4 @@
-const { formatRelative, formatDistance } = require('date-fns')
+const { formatRelative, formatDistance, format } = require('date-fns')
 const clientName = (client) => {
   const clientTypes = {
     INDIVIDUAL: 1,
@@ -26,10 +26,19 @@ const summaryRows = (clientOutage) => {
 const ICON_UP = '/static-assets/internet-ok.png'
 const ICON_DOWN = '/static-assets/internet-down.png'
 
+const copyableMessage = (clientOutage) => {
+  if (clientOutage.end) {
+    return `Update ${format(Date.now(), 'HH:mm')}: The issue has been fixed and service was restored at ${format(clientOutage.end, 'HH:mm')}.  Thanks for your understanding.`
+  } else {
+    return `${format(Date.now(), 'HH:mm')}: We detected some intermittent connectivity issues from ${format(clientOutage.start, 'HH:mm')}. We're currently investigating.`
+  }
+}
+
 module.exports = (clientOutage) => {
   return {
     clientName: clientName(clientOutage.client),
     iconSrc: clientOutage.end ? ICON_UP : ICON_DOWN,
-    summaryRows: summaryRows(clientOutage)
+    summaryRows: summaryRows(clientOutage),
+    copyableMessage: copyableMessage(clientOutage)
   }
 }
