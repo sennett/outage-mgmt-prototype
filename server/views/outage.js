@@ -1,4 +1,6 @@
 const { formatRelative, formatDistance, format } = require('date-fns')
+const parsePhoneNumber = require('libphonenumber-js')
+
 const clientName = (client) => {
   const clientTypes = {
     INDIVIDUAL: 1,
@@ -35,10 +37,17 @@ const copyableMessage = (clientOutage) => {
 }
 
 module.exports = (clientOutage) => {
+  const phoneNumberRaw = clientOutage.client.contacts?.[0]?.phone
+  const number = phoneNumberRaw ? parsePhoneNumber(phoneNumberRaw, 'GB')?.number : null
+
   return {
     clientName: clientName(clientOutage.client),
     iconSrc: clientOutage.end ? ICON_UP : ICON_DOWN,
     summaryRows: summaryRows(clientOutage),
-    copyableMessage: copyableMessage(clientOutage)
+    copyableMessage: copyableMessage(clientOutage),
+    callDisabled: number ? '' : 'disabled',
+    callUri: `tel:${number}`,
+    smsUri: `sms:${number}`,
+    unmsLink: `https://portal.valewisp.com/crm/client/${clientOutage.client.id}`
   }
 }

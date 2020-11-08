@@ -78,13 +78,16 @@
 
   <div class="client-outage-actions">
     <textarea class="client-outage-actions__message">{{copyableMessage}}</textarea>
+    {{#if callDisabled}}
+    <div>⚠️ No phone number for {{clientName}}</div>
+    {{/if}}
     <div class="client-outage-actions__buttons">
-      <button class="button">Call</button>
-      <button class="button">Copy and open FB</button>
-      <button class="button">Copy to SMS</button>
+      <a href="{{callUri}}"><button {{callDisabled}}>Call</button></a>
+      <a href="{{smsUri}}"><button {{callDisabled}}>Copy to SMS</button></a>
+      <a><button>Copy and open FB</button></a>
     </div>
   </div>
-  <a href='#'>Open in UNMS</a>
+  <a href='{{unmsLink}}' target="_blank">Open in UNMS</a>
 
 </body>
 

@@ -12,6 +12,7 @@
     "got": "^11.7.0",
     "handlebars": "^4.7.6",
     "knex": "^0.21.6",
+    "libphonenumber-js": "^1.9.2",
     "lodash": "^4.17.20",
     "node-fetch": "^2.6.1",
     "pg": "^8.4.1",
