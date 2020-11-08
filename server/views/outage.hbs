@@ -32,6 +32,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 0.3rem;
   }
 
   .client-outage-header__icon {
@@ -41,10 +42,6 @@
   .client-outage-header__name {
     flex-grow: 1;
     margin: 0 0 0 1rem;
-  }
-
-  .client-outage-header__time {
-    margin-top: 1rem;
   }
 
   .client-outage-actions__message {
@@ -58,15 +55,25 @@
     justify-content: space-between;
     margin: 1rem 0;
   }
+
+  .client-outage-header__time {
+    margin: 0.3rem 0;
+  }
+
+  a {
+    color: #00c0ff
+  }
 </style>
 
 <body>
   <div class="client-outage-header">
     <div class="client-outage-header__top-row">
-      <img src="/static-assets/internet-ok.png" class="client-outage-header__icon" />
+      <img src="{{iconSrc}}" class="client-outage-header__icon" />
       <h1 class="client-outage-header__name">{{clientName}}</h1>
     </div>
-    <div class="client-outage-header__time">Out since 11:42 (2h 40m)</div>
+    {{#each summaryRows}}
+    <div class="client-outage-header__time">{{this}}</div>
+    {{/each}}
   </div>
 
   <div class="client-outage-actions">
@@ -78,7 +85,7 @@
       <button class="button">Copy to SMS</button>
     </div>
   </div>
-
+  <a href='#'>Open in UNMS</a>
 
 </body>
 

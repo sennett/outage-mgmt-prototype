@@ -28,6 +28,7 @@ Tech ideas:
 
 - use this lib to make a stream from fetch?  https://www.twilio.com/blog/using-rxjs-observables-with-javascript-async-and-await
 - https://linux.die.net/man/1/snmpwalk
+- next JS, NX, Material design
 
 Hamish notes:
 
